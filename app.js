@@ -2455,6 +2455,11 @@ let jogoCanalRealtime = null;
 let jogoUltimoRelatorio = null; // guarda o resultado do fechamento da última rodada, para exibir o "relatório da rodada"
 let jogoRelatoriosPorRodada = {}; // relatórios de TODAS as rodadas fechadas já lidos do banco (numero -> itens), só para facilitador
 let jogoRelatorioAbertoNumero = null; // qual número de rodada está expandido no navegador de relatórios do facilitador
+let jogoVisualizandoComoTimeId = null; // se preenchido, o facilitador está pré-visualizando a tela de um time específico
+
+function timeAtivoParaDecisao() {
+  return jogoVisualizandoComoTimeId || jogoMeuTimeId;
+}
 
 function souFacilitador() {
   return minhaRole === "facilitador" || minhaRole === "admin";
@@ -2585,9 +2590,10 @@ async function abrirNovaRodada(prazoISO) {
 
 async function salvarMinhaDecisao(area, acao) {
   const rodadaAberta = jogoRodadas.find((r) => r.status === "aberta");
-  if (!rodadaAberta || !jogoMeuTimeId) return;
+  const timeId = timeAtivoParaDecisao();
+  if (!rodadaAberta || !timeId) return;
   await sbClient.from("game_decisions").upsert({
-    round_id: rodadaAberta.id, team_id: jogoMeuTimeId, area, acao, decidido_por: window.__meuUserId
+    round_id: rodadaAberta.id, team_id: timeId, area, acao, decidido_por: window.__meuUserId
   }, { onConflict: "round_id,team_id,area" });
   jogoMinhasDecisoesRascunho[area] = acao;
   await recarregarSessaoSilencioso();
@@ -2737,6 +2743,7 @@ function renderPainelFacilitador() {
             <strong>${esc(t.nome)}</strong>
             <span class="pill pill-${t.status === "ativo" ? "ok" : "risco"}">${STATUS_LABEL[t.status]}</span>
             ${rodadaAberta ? `<span class="muted"> · ${contarDecisoesDoTime(t.id)}/4 decisões nesta rodada</span>` : ""}
+            <button class="btn btn-ghost btn-xs" type="button" data-action="jogo-ver-como-jogador" data-team-id="${t.id}" style="margin-left:8px">👁️ Ver como jogador</button>
           </div>
           <div class="form-linha-inline">
             <input type="email" placeholder="e-mail da pessoa" class="membro-email-input" data-team-id="${t.id}" />
@@ -2831,8 +2838,13 @@ function renderRelatorioRodada(relatorio) {
 
 function renderPainelTime() {
   const sessao = jogoSessaoAtual;
-  if (!jogoMeuTimeId) {
+  const timeId = timeAtivoParaDecisao();
+  const emPreview = !!jogoVisualizandoComoTimeId && souFacilitador();
+  const bannerPreview = emPreview ? `<div class="readonly-banner">👁️ Você está vendo como o time <strong>${esc((jogoTimes.find((t) => t.id === jogoVisualizandoComoTimeId) || {}).nome || "")}</strong> vê esta tela. As decisões que você tomar aqui valem de verdade para esse time. <button class="link-btn" type="button" data-action="jogo-voltar-facilitador">← Voltar ao painel de facilitador</button></div>` : "";
+
+  if (!timeId) {
     return `
+      ${bannerPreview}
       <div class="stage-head">
         <div class="eyebrow">Business Game</div>
         <h1>${esc(sessao.nome)}</h1>
@@ -2845,15 +2857,16 @@ function renderPainelTime() {
     `;
   }
 
-  const meuTime = jogoTimes.find((t) => t.id === jogoMeuTimeId);
+  const meuTime = jogoTimes.find((t) => t.id === timeId);
   const rodadaAberta = jogoRodadas.find((r) => r.status === "aberta");
   const minhasDecisoes = {};
-  jogoDecisoesDoTime.filter((d) => d.team_id === jogoMeuTimeId).forEach((d) => { minhasDecisoes[d.area] = d.acao; });
-  Object.assign(minhasDecisoes, jogoMinhasDecisoesRascunho);
+  jogoDecisoesDoTime.filter((d) => d.team_id === timeId).forEach((d) => { minhasDecisoes[d.area] = d.acao; });
+  if (!emPreview) Object.assign(minhasDecisoes, jogoMinhasDecisoesRascunho);
 
   const emJogo = meuTime.status === "ativo";
 
   return `
+    ${bannerPreview}
     <div class="stage-head">
       <div class="eyebrow">Business Game · Time ${esc(meuTime.nome)}</div>
       <h1>${esc(sessao.nome)}</h1>
@@ -2939,6 +2952,7 @@ function renderPainelTime() {
 
 function renderJogo() {
   if (!jogoSessaoAtual) return renderListaSessoesJogo();
+  if (jogoVisualizandoComoTimeId) return renderPainelTime();
   if (souFacilitador() && jogoView === "facilitador") return renderPainelFacilitador();
   return renderPainelTime();
 }
@@ -2946,6 +2960,7 @@ function renderJogo() {
 async function handleJogoAction(action, el) {
   if (action === "jogo-voltar-lista") {
     jogoSessaoAtual = null;
+    jogoVisualizandoComoTimeId = null;
     if (jogoCanalRealtime) { sbClient.removeChannel(jogoCanalRealtime); jogoCanalRealtime = null; }
     await carregarSessoesJogo();
     renderStageOnly();
@@ -3014,6 +3029,18 @@ async function handleJogoAction(action, el) {
 
   if (action === "jogo-ver-relatorio") {
     jogoRelatorioAbertoNumero = parseInt(el.getAttribute("data-numero"), 10);
+    renderStageOnly();
+    return;
+  }
+
+  if (action === "jogo-ver-como-jogador") {
+    jogoVisualizandoComoTimeId = el.getAttribute("data-team-id");
+    renderStageOnly();
+    return;
+  }
+
+  if (action === "jogo-voltar-facilitador") {
+    jogoVisualizandoComoTimeId = null;
     renderStageOnly();
     return;
   }
