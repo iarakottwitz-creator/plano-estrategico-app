@@ -2873,6 +2873,8 @@ function renderPainelTime() {
       <p class="lede">Rodada ${sessao.rodada_atual} de ${sessao.total_rodadas} · <button class="link-btn" type="button" data-action="jogo-voltar-lista">← voltar às partidas</button></p>
     </div>
 
+    ${jogoSessaoAtual.mini_caso_atual !== null && jogoSessaoAtual.mini_caso_atual !== undefined ? painelMiniCaso(jogoSessaoAtual) : ""}
+
     ${!emJogo ? `
     <div class="card card-encerrado">
       <div class="card-kicker">Fim de jogo para o seu time</div>
@@ -2897,8 +2899,6 @@ function renderPainelTime() {
       <div class="card-kicker">Demonstrações contábeis do seu time (trimestre atual)</div>
       ${painelDemonstracoes(meuTime.estado)}
     </div>
-
-    ${jogoSessaoAtual.mini_caso_atual !== null && jogoSessaoAtual.mini_caso_atual !== undefined ? painelMiniCaso(jogoSessaoAtual) : ""}
 
     <details class="accordion-simples">
       <summary>Histórico contábil pré-jogo (os 4 trimestres antes da rodada 1)</summary>
