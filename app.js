@@ -1,143 +1,143 @@
-// ===================== DADOS DA METODOLOGIA (extraídos da planilha) =====================
+// ===================== DADOS DA METODOLOGIA (ambientado em serviços de saúde) =====================
 
 const PEST_DATA = {
   politico: {
     label: "Ambiente Político",
     itens: [
-      "Impacto tributário / informalidade / incentivos fiscais",
-      "Mudança de legislação",
-      "Concessões do Estado",
-      "Legislação anti-truste e monopólios",
-      "Política internacional (incentivos à exportação/importação; acordos internacionais)",
-      "Direito do consumidor",
-      "Legislação trabalhista",
-      "Fiscalização",
-      "Compras governamentais",
-      "Infraestrutura (estradas, portos, aeroportos, ferrovias etc.)",
-      "Direito comercial / propriedade intelectual"
+      "Regulação sanitária e fiscalização (ANVISA, vigilância sanitária local)",
+      "Política de reajuste e regulação de planos de saúde (ANS)",
+      "Judicialização da saúde (ações judiciais por procedimentos/medicamentos)",
+      "Política de saúde pública e investimento no SUS",
+      "Legislação trabalhista para profissionais de saúde (jornada, plantões, escalas)",
+      "Programas de acreditação e certificação de qualidade (ONA, ISO, Joint Commission)",
+      "Política de incentivo à exportação de serviços de saúde (turismo médico)",
+      "Compras públicas e licitações em saúde",
+      "Legislação sobre telemedicina e prontuário eletrônico",
+      "Direito do consumidor aplicado a serviços de saúde",
+      "Políticas de segurança do paciente e obrigatoriedade de protocolos"
     ]
   },
   economico: {
     label: "Ambiente Econômico",
     itens: [
-      "Mercados globais",
-      "Abertura da economia",
-      "Aumento do comércio entre países",
-      "Queda de barreiras comerciais",
-      "Estabilização econômica",
-      "Aumento do poder de compra das classes mais pobres",
-      "(Des)valorização da moeda nacional",
-      "Planejamento financeiro nas famílias",
-      "Liberalização do crédito",
-      "Taxa de juros",
-      "Crescimento dos serviços",
-      "Fusões e aquisições entre empresas"
+      "Inflação médica (custo de insumos e procedimentos acima da inflação geral)",
+      "Taxa de juros e custo de capital para investimento em equipamentos",
+      "Câmbio e dependência de insumos/equipamentos importados",
+      "Renda disponível das famílias e adesão a planos de saúde privados",
+      "Taxa de desemprego e perda de planos de saúde corporativos",
+      "Crescimento do mercado de planos de saúde e seguros",
+      "Consolidação e fusões entre operadoras de saúde",
+      "Custo de mão de obra especializada (enfermagem, médicos, técnicos)",
+      "Financiamento e crédito para expansão de clínicas/hospitais",
+      "Participação da saúde privada no PIB",
+      "Poder de compra das classes emergentes para saúde suplementar",
+      "Custo de seguros de responsabilidade civil médica"
     ]
   },
   social: {
     label: "Ambiente Social",
     itens: [
-      "Envelhecimento da população",
-      "Preocupação com saúde",
-      "Preocupação com estética",
-      "Pressões pela conservação do meio ambiente",
-      "Busca por qualidade de vida / entretenimento / viagens",
-      "Concentração nas grandes cidades x migração para subúrbios",
-      "Aumento do trânsito nas grandes cidades",
-      "Menor tempo livre",
-      "Fim do emprego (tradicional)",
-      "Mais atividades centradas no lar",
-      "Maior participação feminina na força de trabalho",
-      "Crescimento no nível educacional",
-      "Aumento dos valores democráticos",
-      "Transformação da família",
-      "Aumento das taxas de violência",
-      "Convergência x divergência cultural",
-      "Consumo ético (respeito a patentes, direitos autorais, certificação de origem etc.)",
-      "Responsabilidade social e ambiental na comunidade"
+      "Envelhecimento da população e aumento da demanda por cuidados crônicos",
+      "Aumento de doenças crônicas não transmissíveis (diabetes, hipertensão, obesidade)",
+      "Busca por bem-estar, prevenção e medicina integrativa",
+      "Mudança de hábitos de consumo de saúde pós-pandemia",
+      "Maior exigência do paciente como \"consumidor\" (experiência, conveniência)",
+      "Redes sociais e reputação online de profissionais e instituições de saúde",
+      "Aumento da conscientização sobre saúde mental",
+      "Crescimento da telemedicina e do atendimento remoto",
+      "Desigualdade de acesso a serviços de saúde entre regiões e classes sociais",
+      "Maior participação feminina no mercado de trabalho em saúde",
+      "Crescimento no nível educacional e informação sobre saúde (\"Dr. Google\")",
+      "Aumento da expectativa de vida",
+      "Mudança no perfil familiar (menos cuidadores informais disponíveis)",
+      "Aumento da judicialização e das reclamações por parte de pacientes",
+      "Valorização da humanização no atendimento",
+      "Consumo ético e sustentabilidade em saúde (descarte de resíduos, ESG)",
+      "Responsabilidade social e programas de saúde comunitária",
+      "Diversidade e inclusão no atendimento a diferentes públicos"
     ]
   },
   tecnologico: {
     label: "Ambiente Tecnológico",
     itens: [
-      "Internet em nuvem",
-      "Internet das coisas (IoT)",
-      "Digitalização",
-      "Inteligência artificial",
-      "Convergência tecnológica",
-      "Novos materiais",
-      "Nanotecnologia",
-      "Automação",
-      "Biotecnologia e engenharia genética",
-      "Redução do ciclo de vida dos produtos"
+      "Telemedicina e teleconsulta",
+      "Prontuário eletrônico e interoperabilidade de dados de saúde",
+      "Inteligência artificial aplicada a diagnóstico e triagem",
+      "Cirurgia robótica e técnicas minimamente invasivas",
+      "Medicina personalizada e genômica",
+      "Wearables e monitoramento remoto de pacientes",
+      "Automação de processos administrativos e agendamento",
+      "Cibersegurança e proteção de dados sensíveis de saúde (LGPD)",
+      "Novos materiais e dispositivos médicos",
+      "Redução do ciclo de vida de tecnologias e equipamentos médicos"
     ]
   }
 };
 
 const PORTER_DATA = {
   forca1: {
-    label: "Força 1 · Possibilidade de entrada de concorrentes",
+    label: "Força 1 · Possibilidade de entrada de novos concorrentes",
     curto: "Entrada de concorrentes",
     itens: [
-      "É possível ser pequeno para entrar no negócio.",
-      "Empresas concorrentes têm marcas desconhecidas ou os clientes não são fiéis.",
-      "Baixo investimento em infraestrutura, crédito a clientes e produtos.",
-      "Os clientes terão baixos custos para trocarem seus atuais fornecedores.",
-      "Tecnologia dos concorrentes não é patenteada. Não é necessário investimento em pesquisa.",
-      "O local/negócio, compatível com a concorrência, exigirá pouco investimento.",
-      "Não há exigências do governo que beneficiam empresas existentes ou limitam a entrada de novas empresas.",
-      "Empresas estabelecidas têm pouca experiência no negócio ou custos altos.",
-      "É improvável uma guerra com os novos concorrentes.",
-      "O mercado não está saturado."
+      "É possível abrir uma clínica/consultório pequeno com baixo investimento inicial.",
+      "Marcas de clínicas/hospitais concorrentes são pouco conhecidas ou os pacientes não são fiéis.",
+      "Baixo investimento em infraestrutura, equipamentos e credenciamento já é suficiente para operar.",
+      "Pacientes trocam facilmente de prestador, sem custo relevante.",
+      "A tecnologia médica utilizada não é exclusiva/patenteada; não exige P&D intenso.",
+      "A localização exigida (proximidade de hospitais, bairros de interesse) é fácil de replicar.",
+      "Não há exigências regulatórias (habilitação sanitária, credenciamento) que restrinjam a entrada de novos prestadores.",
+      "Prestadores já estabelecidos não têm vantagem relevante de experiência ou custo.",
+      "É improvável uma disputa agressiva de preços com os novos entrantes.",
+      "O mercado local não está saturado de oferta."
     ]
   },
   forca2: {
-    label: "Força 2 · Rivalidade entre as empresas do ramo",
-    curto: "Rivalidade entre concorrentes",
+    label: "Força 2 · Rivalidade entre prestadores do mesmo ramo",
+    curto: "Rivalidade entre prestadores",
     itens: [
-      "Existe grande número de concorrentes, com relativo equilíbrio em termos de tamanho e recursos.",
-      "O setor onde se situa o negócio mostra lento crescimento. Uns prosperam em detrimento de outros.",
-      "Custos fixos altos e pressão no sentido de vender o máximo para cobrir estes custos.",
-      "Acirrada disputa de preços entre os concorrentes.",
-      "Não há diferenciação entre os produtos/serviços comercializados pelos concorrentes.",
-      "É muito dispendioso para as empresas já estabelecidas saírem do negócio."
+      "Existe grande número de clínicas/prestadores concorrentes, com porte parecido.",
+      "O setor de saúde nesta região mostra crescimento lento.",
+      "Custos fixos altos (equipe, equipamentos, aluguel) pressionam a necessidade de ocupar a agenda.",
+      "Há disputa acirrada de preços/tabelas com operadoras e pacientes particulares.",
+      "Não há diferenciação clara entre os serviços oferecidos pelos concorrentes.",
+      "É muito custoso para clínicas/hospitais já estabelecidos encerrar as atividades."
     ]
   },
   forca3: {
-    label: "Força 3 · Ameaça de produtos substitutos",
-    curto: "Produtos substitutos",
+    label: "Força 3 · Ameaça de serviços substitutos",
+    curto: "Serviços substitutos",
     itens: [
-      "Verifica-se uma enorme quantidade de produtos/serviços substitutos.",
-      "Produtos/serviços substitutos têm custos mais baixos que os das empresas existentes no negócio.",
-      "Empresas existentes não costumam utilizar publicidade para promover sua imagem e dos produtos/serviços.",
-      "Setores de atuação dos produtos/serviços substitutos estão em expansão, aumentando a concorrência."
+      "Existe grande quantidade de alternativas substitutas (telemedicina, apps de saúde, farmácias com serviços).",
+      "Os serviços substitutos têm custo mais baixo que o atendimento presencial tradicional.",
+      "Os prestadores existentes não costumam investir em marketing/imagem institucional.",
+      "Os setores de serviços substitutos (telessaúde, medicina preventiva digital) estão em expansão, aumentando a concorrência."
     ]
   },
   forca4: {
-    label: "Força 4 · Poder de negociação dos compradores",
-    curto: "Poder dos compradores",
+    label: "Força 4 · Poder de negociação de pacientes e operadoras",
+    curto: "Poder de pacientes/operadoras",
     itens: [
-      "Clientes compram em grandes quantidades e sempre fazem forte pressão por preços menores.",
-      "Produto/serviço vendido pela empresa representa muito nos custos dos clientes ou de suas compras.",
-      "Produtos/serviços que os clientes compram são padronizados.",
-      "Clientes não têm custos adicionais significativos se mudarem de fornecedores.",
-      "Há sempre uma ameaça dos clientes virem a produzir os produtos/serviços adquiridos no setor.",
-      "Produto/serviço vendido pela empresa existente não é essencial para melhorar os produtos do comprador.",
-      "Clientes são muito bem informados sobre preços e custos do setor.",
-      "Clientes trabalham com margens de lucro achatadas."
+      "Operadoras de saúde negociam em grande volume e pressionam por tabelas menores.",
+      "O serviço prestado representa parcela significativa do custo da operadora ou do orçamento do paciente.",
+      "Os procedimentos/consultas oferecidos são padronizados, facilitando a comparação.",
+      "Pacientes não têm custo relevante para trocar de prestador.",
+      "Há ameaça de operadoras/redes verticalizarem e prestarem o serviço internamente.",
+      "O serviço prestado não é percebido como essencial ou diferenciado pelo paciente.",
+      "Pacientes e operadoras são bem informados sobre preços e qualidade (comparadores, avaliações online).",
+      "Operadoras e pacientes trabalham com margens de reembolso ou orçamento apertado."
     ]
   },
   forca5: {
-    label: "Força 5 · Poder de negociação dos fornecedores",
+    label: "Força 5 · Poder de negociação dos fornecedores (equipamentos, insumos, profissionais)",
     curto: "Poder dos fornecedores",
     itens: [
-      "O fornecimento de produtos, insumos e serviços necessários é concentrado em poucas empresas fornecedoras.",
-      "Produtos/serviços adquiridos pelas empresas existentes não são facilmente substituídos por outros.",
-      "Empresas existentes no negócio não são clientes importantes para os fornecedores.",
-      "Materiais/serviços adquiridos dos fornecedores são importantes para o sucesso dos negócios no setor.",
-      "Os produtos comprados dos fornecedores são diferenciados.",
-      "Existem custos significativos para se mudar de fornecedor.",
-      "Ameaça permanente de os fornecedores entrarem no negócio do setor."
+      "O fornecimento de equipamentos/insumos médicos é concentrado em poucos fabricantes.",
+      "Insumos e equipamentos médicos não são facilmente substituíveis por alternativas.",
+      "A clínica/hospital não é um cliente relevante para os grandes fornecedores.",
+      "Profissionais especializados (médicos, técnicos) são essenciais e escassos.",
+      "Os equipamentos/insumos comprados são diferenciados ou exclusivos.",
+      "Existem custos altos para trocar de fornecedor de equipamentos/insumos.",
+      "Há ameaça permanente de fornecedores (fabricantes, redes de diagnóstico) entrarem no negócio assistencial."
     ]
   }
 };
@@ -146,54 +146,54 @@ const CICLO_DATA = {
   introducao: {
     label: "Introdução",
     itens: [
-      "O produto/serviço representa ou cria um novo setor: entra num ramo no qual ainda não existem (ou existem poucas) companhias concorrentes.",
-      "O produto/serviço ainda não tem um mercado específico: a empresa terá que construir este mercado sensibilizando clientes a experimentarem o produto.",
-      "O produto/serviço não conta com um canal de distribuição específico: a empresa está construindo-o (ou já construiu) para todo o setor.",
-      "A produção ainda é em baixa escala no setor como um todo, mas com possibilidade de crescer; os poucos competidores estão aprendendo a produzir com qualidade e os custos ainda são elevados.",
-      "O produto/serviço consome bastante investimento em publicidade para demonstrar aos clientes para que serve.",
-      "O produto/serviço não apresenta um padrão: há muita variação na oferta entre os poucos competidores.",
-      "O mercado do produto/serviço é muito pequeno diante do potencial a que pode chegar."
+      "O serviço/especialidade representa ou cria uma nova frente de atuação, com pouca ou nenhuma concorrência estabelecida.",
+      "O serviço ainda não tem mercado definido: a organização precisa educar pacientes e médicos referenciadores sobre seu valor.",
+      "Não há canal de encaminhamento/distribuição consolidado; a organização está construindo essa rede.",
+      "A capacidade de atendimento ainda é baixa, com poucos profissionais capacitados e custos elevados.",
+      "O serviço exige investimento pesado em divulgação para explicar aos pacientes/médicos do que se trata.",
+      "Não há padrão de protocolo estabelecido: há muita variação entre os poucos que já oferecem esse serviço.",
+      "O mercado potencial deste serviço é muito maior do que a demanda atual capturada."
     ]
   },
   crescimento: {
     label: "Crescimento",
     itens: [
-      "O produto/serviço está em um setor em forte crescimento: as taxas de crescimento do setor são superiores ao crescimento da economia como um todo.",
-      "O produto/serviço é reconhecido pelo cliente; a maior parte dos clientes compra pela primeira vez, ou é usuário recente.",
-      "O produto/serviço é \"sonho de consumo\" de muitos compradores que ainda não o têm, mas pretendem adquiri-lo em breve.",
-      "Os canais de distribuição do produto/serviço aumentam de forma rápida.",
-      "As empresas do setor fazem investimentos para aumentar a capacidade de produção e acompanhar as taxas de crescimento no consumo.",
-      "Novas empresas entram no setor para atender o consumo crescente.",
-      "As empresas estabelecidas não dão conta de atender a demanda; pode acontecer \"filas\" de espera para adquirir o produto/serviço.",
-      "As empresas começam a fazer propaganda não mais para conscientizar compradores, mas para fixar sua marca."
+      "O serviço está em forte crescimento, superior ao crescimento do setor de saúde como um todo.",
+      "O serviço já é reconhecido; a maioria dos pacientes está experimentando pela primeira vez ou é usuária recente.",
+      "O serviço é \"desejado\" por muitos pacientes que ainda não o utilizam, mas pretendem utilizar em breve.",
+      "Os canais de encaminhamento (médicos referenciadores, operadoras) aumentam rapidamente.",
+      "A organização investe para aumentar a capacidade de atendimento e acompanhar a demanda.",
+      "Novos concorrentes entram no mercado para atender a demanda crescente.",
+      "A capacidade instalada não dá conta da demanda; pode haver fila de espera para o atendimento.",
+      "A comunicação deixa de ser só educativa e passa a reforçar marca e reputação."
     ]
   },
   maturidade: {
     label: "Maturidade",
     itens: [
-      "O produto/serviço está em um setor de baixo crescimento: as taxas de crescimento equiparam-se ao crescimento da economia como um todo.",
-      "O produto/serviço é reconhecido pelo cliente; a maior parte já compra habitualmente, ou já comprou repetidas vezes.",
-      "O produto/serviço atingiu sua capacidade máxima; expansão só é viável descobrindo novos grupos de clientes (nichos).",
-      "Os canais de distribuição são estáveis e estão saturados; as empresas tentam crescer investindo em novos canais.",
-      "A capacidade produtiva do setor está saturada ou mesmo ociosa; não há muitos investimentos de ampliação.",
-      "O setor passa (ou já passou) por um forte movimento de fusões e aquisições de empresas.",
-      "A oferta é superior à demanda no setor.",
-      "As empresas têm tradição no setor e/ou marcas fortes.",
-      "As empresas monitoram com atenção sua participação de mercado e a ação dos concorrentes.",
-      "As empresas têm métodos de produção/operação de larga escala e atendem mercados de massa."
+      "O serviço está em um segmento de baixo crescimento, equiparado ao crescimento do setor de saúde em geral.",
+      "O serviço é bem estabelecido; a maioria dos pacientes já utilizou ou utiliza rotineiramente.",
+      "O serviço atingiu sua capacidade máxima; crescer exige atingir novos públicos ou nichos.",
+      "Os canais de encaminhamento estão estáveis e saturados; crescer exige investir em novos canais (ex: digital).",
+      "A capacidade instalada do setor está saturada ou ociosa; há pouco investimento em expansão.",
+      "O setor passa por um forte movimento de fusões e aquisições entre clínicas e redes.",
+      "A oferta de prestadores é superior à demanda.",
+      "As organizações estabelecidas têm tradição no setor e/ou marca forte.",
+      "As organizações monitoram de perto sua participação de mercado e a ação dos concorrentes.",
+      "As organizações operam com escala e atendem grandes volumes ou populações."
     ]
   },
   declinio: {
     label: "Declínio",
     itens: [
-      "O mercado para este produto/serviço está em declínio ou está hoje num patamar bem inferior ao que representou no passado.",
-      "Várias empresas fazem desinvestimento nesta linha de produtos/serviços (saem do setor).",
-      "A tecnologia adotada no setor é vista como obsoleta.",
-      "Há novos produtos/serviços que substituem os do setor, e tais substitutos estão em expansão.",
-      "Os compradores podem ser considerados \"saudosistas\", \"tradicionalistas\", \"colecionadores\" ou pessoas de mais baixa renda que ainda não migraram para os substitutos.",
-      "Para sobreviver, as empresas do setor devem especializar-se em um nicho.",
-      "Os canais de distribuição são especiais para tais nichos.",
-      "Há hoje muito menos empresas atuando neste setor do que já houve no passado."
+      "A demanda por este serviço está em declínio ou bem abaixo do que já representou no passado.",
+      "Vários prestadores estão desinvestindo nesta linha de serviço.",
+      "A tecnologia ou abordagem clínica utilizada é vista como obsoleta.",
+      "Há novos serviços/tecnologias que substituem esta linha, e esses substitutos estão em expansão.",
+      "Os pacientes que ainda buscam este serviço têm perfil específico (tradicionais, sem acesso a alternativas).",
+      "Para sobreviver, os prestadores precisam se especializar em um nicho.",
+      "Os canais de encaminhamento são específicos para esse nicho remanescente.",
+      "Há hoje muito menos prestadores atuando nesta linha de serviço do que no passado."
     ]
   }
 };
@@ -202,59 +202,59 @@ const ESTRATEGIAS_DATA = {
   custo: {
     label: "Liderança em custo / excelência operacional",
     itens: [
-      "A empresa possui instalações para produção em larga escala.",
-      "A empresa constantemente reduz custos ao longo do tempo: pesquisa e implanta novas formas de operar com mais eficiência.",
-      "A empresa controla de forma rígida os custos e despesas gerais.",
-      "A empresa possui uma estrutura enxuta e sempre minimiza custos em áreas não relacionadas diretamente com a produção.",
-      "A empresa oferece incentivos baseados em metas quantitativas (produtividade, vendas etc.).",
-      "A empresa tem organização e responsabilidades bem estruturadas, evitando duplicidade e retrabalho.",
-      "A empresa tem acesso a capital de custo mais baixo para seus investimentos.",
-      "A empresa desenvolve produtos projetados para facilitar a fabricação.",
-      "A empresa possui boa capacidade de engenharia de processo.",
-      "A empresa possui um sistema de distribuição com baixo custo.",
-      "A empresa coloca grande energia na negociação com fornecedores para reduzir custos.",
-      "A empresa vende produtos padronizados, sem especificação e customização/personalização.",
-      "Os produtos e serviços que a empresa oferece são básicos; adicionais são cobrados separadamente.",
-      "A empresa lida bem com operação em larga escala / grandes volumes.",
-      "A empresa possui reputação de ter os custos mais baixos em seu setor.",
-      "A empresa oferece atendimento rápido, padronizado e de baixo custo."
+      "A organização possui capacidade para atendimento em grande escala/volume.",
+      "A organização reduz custos constantemente, buscando eficiência operacional.",
+      "A organização controla rigidamente custos e despesas (gestão de insumos, ociosidade, glosas).",
+      "A organização tem estrutura enxuta, minimizando custos fora do atendimento direto ao paciente.",
+      "A organização oferece incentivos baseados em produtividade (metas de atendimento).",
+      "A organização tem processos bem definidos, evitando retrabalho e duplicidade.",
+      "A organização tem acesso a capital de baixo custo para investir em equipamentos e estrutura.",
+      "A organização padroniza protocolos para ganhar eficiência sem perder segurança.",
+      "A organização tem boa capacidade de engenharia de processos assistenciais.",
+      "A organização tem baixo custo logístico e operacional (agendamento, suprimentos, escalas).",
+      "A organização negocia agressivamente com fornecedores para reduzir custos.",
+      "A organização oferece atendimento padronizado, sem grande customização.",
+      "Serviços adicionais (personalização, conforto extra) são cobrados à parte.",
+      "A organização opera bem em grande escala/alto volume de pacientes.",
+      "A organização tem reputação de oferecer o atendimento mais acessível do setor.",
+      "A organização oferece atendimento rápido e padronizado, de baixo custo."
     ]
   },
   diferenciacao: {
     label: "Diferenciação / inovação",
     itens: [
-      "A empresa possui uma forte imagem de marca formada por meio de publicidade intensiva.",
-      "A empresa possui grande habilidade de marketing (propaganda e pesquisa de mercado).",
-      "A empresa possui excelente engenharia de produtos: capta desejos e os transforma rapidamente em produtos viáveis.",
-      "A empresa possui forte coordenação entre P&D e marketing.",
-      "A empresa possui reputação de ser líder em qualidade ou tecnologia no seu setor.",
-      "A empresa possui longa tradição na indústria ou traz reputação de outro setor com grande sinergia.",
-      "A empresa realiza avaliação e incentivos subjetivos em vez de medidas quantitativas.",
-      "A empresa possui peculiaridades (história, tradição etc.) que a tornam única.",
-      "A empresa desenvolve produtos e serviços sob encomenda.",
-      "A empresa possui rede de fornecedores confiáveis, de qualidade e, algumas vezes, exclusivos.",
-      "A empresa oferece produtos exclusivos (design, sofisticação, tecnologia, precisão, durabilidade, atendimento, inovação etc.).",
-      "Os clientes pagam preços-prêmio para obter os produtos/serviços da empresa.",
-      "A empresa tem programas de relacionamento com seus clientes."
+      "A organização tem forte imagem de marca construída por meio de comunicação institucional.",
+      "A organização tem grande habilidade de marketing e relacionamento com pacientes e médicos.",
+      "A organização é ágil em incorporar novas tecnologias e abordagens clínicas.",
+      "Há forte coordenação entre o corpo clínico e as áreas de inovação/pesquisa.",
+      "A organização tem reputação de ser líder em qualidade ou tecnologia no setor.",
+      "A organização tem longa tradição no setor, ou traz reputação de outra área com grande sinergia.",
+      "A organização reconhece e avalia a equipe de forma subjetiva (ambiente de trabalho, flexibilidade), não só por metas.",
+      "A organização tem peculiaridades (história, especialistas renomados) que a tornam única.",
+      "A organização desenvolve planos de cuidado personalizados, sob medida para o paciente.",
+      "A organização tem rede de fornecedores/parceiros confiáveis e, às vezes, exclusivos.",
+      "A organização oferece atendimento exclusivo (tecnologia, conforto, precisão diagnóstica, experiência do paciente).",
+      "Pacientes pagam valores premium para acessar os serviços da organização.",
+      "A organização tem programas de relacionamento e acompanhamento contínuo do paciente."
     ]
   },
   foco: {
     label: "Foco (diferenciação ou custo em um segmento)",
     itens: [
-      "A empresa atende a um segmento específico dentro de uma indústria mais abrangente.",
-      "A empresa é líder no segmento específico em que atua, mas possui pouca participação na indústria como um todo.",
-      "A empresa oferece produtos, facilidades e serviços únicos para o grupo de clientes que atende.",
-      "A empresa é reconhecida por ser especializada neste segmento.",
-      "A empresa possui uma rede de relacionamento personalizada dentro de seu segmento de atuação."
+      "A organização atende um segmento específico (especialidade, faixa etária, região) dentro de um setor mais amplo.",
+      "A organização é líder nesse segmento específico, mas tem pouca presença no setor de saúde como um todo.",
+      "A organização oferece cuidados e facilidades únicas para o grupo de pacientes que atende.",
+      "A organização é reconhecida por ser especializada nesse segmento/nicho.",
+      "A organização tem rede de relacionamento personalizada dentro do seu nicho de atuação."
     ]
   }
 };
 
 const NEGOCIO_PERGUNTAS = [
-  { key: "q1", titulo: "1. Produtos e serviços atuais", ajuda: "Pense com os olhos da concorrência ampliada e de produtos substitutos: não só o produto, mas os serviços que presta, o uso que o cliente faz dele, e o que ele satisfaz no cliente. Enumere os produtos/serviços da empresa." },
-  { key: "q2", titulo: "2. Negócio atual da organização", ajuda: "Tomando por base o item 1, defina o negócio até agora: o que há em comum por trás destes produtos/serviços?" },
-  { key: "q3", titulo: "3. Avaliação do negócio atual", ajuda: "Há algum novo produto/serviço em que a empresa pode ou quer entrar, que está muito próximo e exigirá pouco esforço para entrar?" },
-  { key: "q4", titulo: "4. Negócio no futuro", ajuda: "Escreva o novo negócio considerando os novos produtos/serviços possíveis de serem incorporados, observando o que eles têm em comum." }
+  { key: "q1", titulo: "1. Produtos e serviços de saúde atuais", ajuda: "Pense com os olhos da concorrência ampliada: não só os procedimentos/consultas, mas os serviços de apoio (agendamento, acompanhamento, telemonitoramento), a jornada do paciente, e o que cada serviço resolve para quem o procura. Enumere as linhas de serviço da organização (especialidades, procedimentos, exames, programas de saúde)." },
+  { key: "q2", titulo: "2. Negócio atual da organização", ajuda: "Tomando por base o item 1, defina o negócio até agora: o que há em comum por trás desses serviços de saúde? (ex: promoção de saúde, tratamento de uma condição específica, conveniência/acesso, excelência clínica em um nicho)" },
+  { key: "q3", titulo: "3. Avaliação do negócio atual", ajuda: "Há alguma nova linha de serviço, especialidade ou modelo de atendimento (ex: telemedicina, day clinic, home care) em que a organização pode ou quer entrar, que está próxima e exigirá pouco esforço?" },
+  { key: "q4", titulo: "4. Negócio no futuro", ajuda: "Escreva o novo negócio considerando os novos serviços/especialidades possíveis de serem incorporados, observando o que eles têm em comum." }
 ];
 
 const PLANOS_AREAS = [
@@ -469,7 +469,7 @@ function renderShell() {
       <main class="main">
         <header class="topbar">
           <div class="topbar-left">
-            <input id="empresaInput" class="empresa-input" placeholder="Nome da empresa / unidade de negócio" value="${esc(S.meta.empresa)}" ${pathAttr(["meta", "empresa"])} ${souEditor() ? "" : "disabled"} />
+            <input id="empresaInput" class="empresa-input" placeholder="Nome da empresa / unidade de negócio" value="${esc(S.meta.empresa)}" ${pathAttr(["meta", "empresa"])} ${souEditor() && modoAtual === "plano" && planoTimeAtualId ? "" : "disabled"} style="${modoAtual === "plano" && planoTimeAtualId ? "" : "visibility:hidden"}" />
           </div>
           <div class="topbar-right">
             <span id="saveStatus" class="save-status">${souEditor() ? "Pronto" : "Modo visualização"}</span>
@@ -539,7 +539,21 @@ function onClickDelegated(e) {
 function handleAction(action, el) {
   if (action === "modo-plano" || action === "modo-jogo") {
     modoAtual = action === "modo-plano" ? "plano" : "jogo";
-    renderShell();
+    if (modoAtual === "plano" && !planoTimeAtualId) {
+      carregarMeusTimes().then(renderShell);
+    } else {
+      renderShell();
+    }
+    return;
+  }
+  if (action === "plano-selecionar-time") {
+    selecionarTimeParaPlano(el.getAttribute("data-team-id"));
+    return;
+  }
+  if (action === "plano-trocar-time") {
+    planoTimeAtualId = null;
+    if (planoCanalRealtime) { sbClient.removeChannel(planoCanalRealtime); planoCanalRealtime = null; }
+    carregarMeusTimes().then(renderAll);
     return;
   }
   if (action.indexOf("jogo-") === 0) {
@@ -624,7 +638,16 @@ function renderNav() {
     </div>`;
     return;
   }
-  nav.innerHTML = ETAPAS.map((et) => {
+  if (!planoTimeAtualId) {
+    nav.innerHTML = `<div class="nav-jogo-info">
+      <div class="nav-jogo-titulo">Planejamento Estratégico</div>
+      <p class="nav-jogo-texto">Escolha o time para o qual você vai planejar</p>
+    </div>`;
+    return;
+  }
+  nav.innerHTML = `<div class="nav-jogo-info" style="padding-bottom:0">
+      <p class="nav-jogo-texto">Plano de <strong>${esc(planoTimeAtualNome)}</strong> · <button type="button" class="link-btn" data-action="plano-trocar-time" style="font-size:11px">trocar</button></p>
+    </div>` + ETAPAS.map((et) => {
     const active = et.key === stageAtual ? " active" : "";
     const pct = et.progresso ? et.progresso() : null;
     return `
@@ -653,6 +676,11 @@ function renderStageOnly() {
     renderNav();
     return;
   }
+  if (!planoTimeAtualId) {
+    stage.innerHTML = renderEscolherTimeParaPlano();
+    renderNav();
+    return;
+  }
   const fns = {
     geral: renderGeral, negocio: renderNegocio, pest: renderPest, porter: renderPorter,
     ciclo: renderCiclo, fcs: renderFcs, estrategias: renderEstrategias, swot: renderSwot,
@@ -660,6 +688,25 @@ function renderStageOnly() {
   };
   stage.innerHTML = fns[stageAtual] ? fns[stageAtual]() : "";
   renderNav();
+}
+
+function renderEscolherTimeParaPlano() {
+  return `
+    <div class="stage-head">
+      <div class="eyebrow">Planejamento Estratégico</div>
+      <h1>Para qual time você vai planejar?</h1>
+      <p class="lede">Cada time do Business Game tem o próprio Planejamento Estratégico — as decisões do jogo serão avaliadas em relação a esse plano.</p>
+    </div>
+    <div class="card">
+      ${meusTimesDoUsuario.length ? meusTimesDoUsuario.map((t) => `
+        <div class="sessao-item">
+          <div><strong>${esc(t.teamNome)}</strong><span class="muted"> · partida "${esc(t.sessaoNome)}"</span></div>
+          <button class="btn btn-primary btn-xs" type="button" data-action="plano-selecionar-time" data-team-id="${t.teamId}">Planejar para este time</button>
+        </div>`).join("") : `
+        <p class="card-note">Você ainda não está em nenhum time de uma partida do Business Game. Peça ao facilitador para te adicionar a um time (pelo seu e-mail de login) — depois disso, o plano desse time aparece aqui automaticamente.</p>
+      `}
+    </div>
+  `;
 }
 // ===================== ETAPA: VISÃO GERAL (DASHBOARD) =====================
 
@@ -1339,7 +1386,7 @@ const GAME_DESIGN = {
         "efeitos": {}
       },
       {
-        "acao": "Renegociar preço para baixo com o hospital-âncora",
+        "acao": "Renegociar preço para baixo com o hospital-âncora", "perfilEstrategico": "custo",
         "tema": "",
         "observacao": "Fatura menos e aperta margem, mas melhora a relação com o cliente",
         "efeitos": {
@@ -1373,7 +1420,7 @@ const GAME_DESIGN = {
         }
       },
       {
-        "acao": "Trocar desconto por volume/exclusividade",
+        "acao": "Trocar desconto por volume/exclusividade", "perfilEstrategico": "custo",
         "tema": "",
         "observacao": "Mais receita e cliente mais satisfeito, mas aumenta a dependência dele",
         "efeitos": {
@@ -1384,7 +1431,7 @@ const GAME_DESIGN = {
         }
       },
       {
-        "acao": "Verticalizar faturamento junto às operadoras",
+        "acao": "Verticalizar faturamento junto às operadoras", "perfilEstrategico": "diferenciacao",
         "tema": "",
         "observacao": "Menos glosa e mais maturidade, custa estrutura e caixa no início",
         "efeitos": {
@@ -1395,7 +1442,7 @@ const GAME_DESIGN = {
         }
       },
       {
-        "acao": "Investir em comunicação institucional / gestão de imagem",
+        "acao": "Investir em comunicação institucional / gestão de imagem", "perfilEstrategico": "diferenciacao",
         "tema": "Imagem",
         "observacao": "Constrói reputação de forma proativa; custa margem",
         "efeitos": {
@@ -1404,7 +1451,7 @@ const GAME_DESIGN = {
         }
       },
       {
-        "acao": "Responder à concorrência com oferta agressiva de retenção",
+        "acao": "Responder à concorrência com oferta agressiva de retenção", "perfilEstrategico": "custo",
         "tema": "Concorrência",
         "observacao": "Protege carteira de clientes diante do novo concorrente — se escolhida na rodada da chegada em diante, cancela a erosão passiva de Faturamento daquela rodada",
         "efeitos": {
@@ -1422,7 +1469,7 @@ const GAME_DESIGN = {
         "efeitos": {}
       },
       {
-        "acao": "Padronizar protocolos com rigor",
+        "acao": "Padronizar protocolos com rigor", "perfilEstrategico": "diferenciacao",
         "tema": "",
         "observacao": "Mais segurança e adesão, mas gera resistência (alinhamento societário cai)",
         "efeitos": {
@@ -1432,7 +1479,7 @@ const GAME_DESIGN = {
         }
       },
       {
-        "acao": "Investir em sistema de gestão/dados",
+        "acao": "Investir em sistema de gestão/dados", "perfilEstrategico": "diferenciacao",
         "tema": "",
         "observacao": "Ganho grande de maturidade, custa caixa e margem no curto prazo",
         "efeitos": {
@@ -1443,7 +1490,7 @@ const GAME_DESIGN = {
         }
       },
       {
-        "acao": "Ampliar cobertura de plantão",
+        "acao": "Ampliar cobertura de plantão", "perfilEstrategico": "diferenciacao",
         "tema": "",
         "observacao": "Cliente mais satisfeito e menos risco, mas sobra estrutura e cai margem",
         "efeitos": {
@@ -1454,7 +1501,7 @@ const GAME_DESIGN = {
         }
       },
       {
-        "acao": "Reduzir cobertura para eficiência",
+        "acao": "Reduzir cobertura para eficiência", "perfilEstrategico": "custo",
         "tema": "Imagem",
         "observacao": "Melhora margem e ociosidade, mas sobe risco clínico, cai satisfação e expõe a imagem",
         "efeitos": {
@@ -1466,7 +1513,7 @@ const GAME_DESIGN = {
         }
       },
       {
-        "acao": "Avaliação pré-anestésica obrigatória",
+        "acao": "Avaliação pré-anestésica obrigatória", "perfilEstrategico": "diferenciacao",
         "tema": "",
         "observacao": "Mais segurança e adesão, com um pouco mais de carga operacional",
         "efeitos": {
@@ -1485,7 +1532,7 @@ const GAME_DESIGN = {
         "efeitos": {}
       },
       {
-        "acao": "Transformar médicos em sócios",
+        "acao": "Transformar médicos em sócios", "perfilEstrategico": "diferenciacao",
         "tema": "",
         "observacao": "Muito mais retenção e alinhamento, reparte mais do resultado",
         "efeitos": {
@@ -1495,7 +1542,7 @@ const GAME_DESIGN = {
         }
       },
       {
-        "acao": "Contratar mais equipe",
+        "acao": "Contratar mais equipe", "perfilEstrategico": "diferenciacao",
         "tema": "",
         "observacao": "Alivia muito a sobrecarga e melhora escala, custa margem e caixa",
         "efeitos": {
@@ -1507,7 +1554,7 @@ const GAME_DESIGN = {
         }
       },
       {
-        "acao": "Formar talento internamente (residentes)",
+        "acao": "Formar talento internamente (residentes)", "perfilEstrategico": "diferenciacao",
         "tema": "",
         "observacao": "Ganho mais lento de retenção e cobertura, custo menor que contratar pronto",
         "efeitos": {
@@ -1518,7 +1565,7 @@ const GAME_DESIGN = {
         }
       },
       {
-        "acao": "Manter equipe enxuta / PJ",
+        "acao": "Manter equipe enxuta / PJ", "perfilEstrategico": "custo",
         "tema": "Imagem",
         "observacao": "Melhora margem agora, mas dispara burnout, turnover e risco de imagem",
         "efeitos": {
@@ -1530,7 +1577,7 @@ const GAME_DESIGN = {
         }
       },
       {
-        "acao": "Programa de retenção anti-aliciamento (bônus de permanência)",
+        "acao": "Programa de retenção anti-aliciamento (bônus de permanência)", "perfilEstrategico": "diferenciacao",
         "tema": "Concorrência",
         "observacao": "Protege o time da tentativa do concorrente de aliciar profissionais — se escolhida na rodada da chegada em diante, cancela a erosão passiva de Turnover daquela rodada",
         "efeitos": {
@@ -1577,7 +1624,7 @@ const GAME_DESIGN = {
         }
       },
       {
-        "acao": "Reter parte para reinvestir (formar reserva)",
+        "acao": "Reter parte para reinvestir (formar reserva)", "perfilEstrategico": "diferenciacao",
         "tema": "",
         "observacao": "Constrói fôlego financeiro, mas sócios recebem menos agora",
         "efeitos": {
@@ -1587,7 +1634,7 @@ const GAME_DESIGN = {
         }
       },
       {
-        "acao": "Migrar custo fixo para variável",
+        "acao": "Migrar custo fixo para variável", "perfilEstrategico": "custo",
         "tema": "Imagem",
         "observacao": "Protege a margem em baixa demanda, mas reduz previsibilidade e imagem de marca",
         "efeitos": {
@@ -1952,7 +1999,7 @@ function sortearEvento(estadoAtual, rand) {
 // ---------- Resolução de uma rodada para UM time ----------
 // decisoesTime: { Comercial: "nome da ação", Processos: "...", RH: "...", Financeiro: "..." }
 // contexto: { numeroRodada, eventoNome (ou null), rodadaConcorrente (numero ou null), concorrenteJaChegou (bool antes desta rodada) }
-function resolverRodadaTime(team, decisoesTime, contexto) {
+function resolverRodadaTime(team, decisoesTime, contexto, planoTime) {
   let estado = Object.assign({}, team.estado);
   const efeitosAplicados = [];
 
@@ -1973,6 +2020,13 @@ function resolverRodadaTime(team, decisoesTime, contexto) {
     }
   }
 
+  const contadorAlinhamentoAnterior = (team.rodadasRisco && team.rodadasRisco.desalinhamentoPlano) || 0;
+  const alinhamento = avaliarAlinhamentoPlano(decisoesTime, planoTime, contadorAlinhamentoAnterior);
+  if (alinhamento.penalidadeAplicada) {
+    estado = aplicarEfeitos(estado, alinhamento.efeitos);
+    efeitosAplicados.push({ tipo: "penalidade_desalinhamento", detalhes: alinhamento.decisoesConflitantes });
+  }
+
   const chegaNestaRodada = contexto.rodadaConcorrente === contexto.numeroRodada;
   const concorrenteAtivo = contexto.concorrenteJaChegou || chegaNestaRodada;
   if (chegaNestaRodada) {
@@ -1991,10 +2045,11 @@ function resolverRodadaTime(team, decisoesTime, contexto) {
     }
   }
 
-  const contadores = Object.assign({ P2: 0, G1: 0, R4: 0 }, team.rodadasRisco || {});
+  const contadores = Object.assign({ P2: 0, G1: 0, R4: 0, desalinhamentoPlano: 0 }, team.rodadasRisco || {});
   contadores.P2 = zonaIndicador("P2", estado.P2) === "vermelho" ? contadores.P2 + 1 : 0;
   contadores.G1 = estado.G1 < 20 ? contadores.G1 + 1 : 0;
   contadores.R4 = zonaIndicador("R4", estado.R4) === "vermelho" ? contadores.R4 + 1 : 0;
+  contadores.desalinhamentoPlano = alinhamento.novoContador;
 
   let status = team.status && team.status !== "ativo" ? team.status : "ativo";
   if (status === "ativo") {
@@ -2015,7 +2070,14 @@ function resolverRodadaTime(team, decisoesTime, contexto) {
     decisoes: decisoesTime,
     evento: contexto.eventoNome || null,
     marcoConcorrente: chegaNestaRodada,
-    efeitosAplicados
+    efeitosAplicados,
+    alinhamentoPlano: {
+      perfilPlano: alinhamento.perfilPlano,
+      desalinhado: alinhamento.desalinhado,
+      decisoesConflitantes: alinhamento.decisoesConflitantes,
+      penalidadeAplicada: alinhamento.penalidadeAplicada,
+      avisoJaAtivo: contadorAlinhamentoAnterior > 0
+    }
   };
 
   return {
@@ -2025,6 +2087,50 @@ function resolverRodadaTime(team, decisoesTime, contexto) {
     historico: (team.historico || []).concat([snapshot]),
     concorrenteJaChegou: concorrenteAtivo
   };
+}
+
+// ===================== EXTENSÃO: ALINHAMENTO COM O PLANO ESTRATÉGICO DO TIME =====================
+
+// dado um objeto de plano (mesma estrutura da ferramenta de Planejamento Estratégico),
+// retorna qual perfil (custo | diferenciacao | foco) tem a maior média de notas — ou
+// null se o time ainda não preencheu a etapa de Estratégias Genéricas.
+function estrategiaDominanteDoPlano(plano) {
+  if (!plano || !plano.estrategias) return null;
+  let melhor = null;
+  let melhorMedia = 0;
+  for (const chave of ["custo", "diferenciacao", "foco"]) {
+    const valores = (plano.estrategias[chave] || []).filter((v) => v > 0);
+    if (!valores.length) continue;
+    const media = valores.reduce((a, b) => a + b, 0) / valores.length;
+    if (media > melhorMedia) { melhorMedia = media; melhor = chave; }
+  }
+  return melhor;
+}
+
+function avaliarAlinhamentoPlano(decisoesTime, planoTime, contadorAnterior) {
+  const perfilPlano = estrategiaDominanteDoPlano(planoTime);
+  if (!perfilPlano) {
+    return { perfilPlano: null, desalinhado: false, decisoesConflitantes: [], novoContador: 0, efeitos: {}, penalidadeAplicada: false };
+  }
+  const decisoesConflitantes = [];
+  for (const area of Object.keys(AREAS_INDICADORES)) {
+    const nomeAcao = decisoesTime[area] || "Manter estratégia atual";
+    const acao = encontrarAcao(area, nomeAcao);
+    if (acao && acao.perfilEstrategico && acao.perfilEstrategico !== perfilPlano) {
+      decisoesConflitantes.push({ area, acao: acao.acao, perfilDecisao: acao.perfilEstrategico });
+    }
+  }
+  const desalinhado = decisoesConflitantes.length > 0;
+  let novoContador = desalinhado ? (contadorAnterior || 0) + 1 : 0;
+  let efeitos = {};
+  let penalidadeAplicada = false;
+  // 2ª rodada seguida sem corrigir (nem decisão, nem plano revisado) -> consequência real
+  if (novoContador >= 2) {
+    efeitos = { R4: -8 };
+    penalidadeAplicada = true;
+    novoContador = 0; // reinicia — a consequência já foi aplicada
+  }
+  return { perfilPlano, desalinhado, decisoesConflitantes, novoContador, efeitos, penalidadeAplicada };
 }
 
 function zonasDoEstado(estado) {
@@ -2184,6 +2290,25 @@ function seletorDecisoes(decisoesAtuais, disabled) {
   }).join("");
 }
 
+const PERFIL_LABEL = { custo: "Liderança em custo", diferenciacao: "Diferenciação", foco: "Foco" };
+
+function renderAvisoAlinhamento(al) {
+  if (!al || !al.perfilPlano) return "";
+  if (al.penalidadeAplicada) {
+    return `<div class="relatorio-desalinho relatorio-desalinho-forte">
+      🔴 <strong>Desalinhamento persistente com o plano</strong> — 2ª rodada seguida em que as decisões contradizem a Estratégia Genérica declarada (${PERFIL_LABEL[al.perfilPlano]}). Alinhamento societário caiu como consequência.
+      <div class="relatorio-desalinho-detalhe">${al.decisoesConflitantes.map((d) => `<span class="tag tag-alerta">${d.area}: ${esc(d.acao)}</span>`).join(" ")}</div>
+    </div>`;
+  }
+  if (al.desalinhado) {
+    return `<div class="relatorio-desalinho">
+      ⚠️ Estas decisões contradizem a Estratégia Genérica do plano (<strong>${PERFIL_LABEL[al.perfilPlano]}</strong>). Alinhem as decisões na próxima rodada, ou revisem o plano se o rumo mudou de verdade — senão isso afeta o Alinhamento societário.
+      <div class="relatorio-desalinho-detalhe">${al.decisoesConflitantes.map((d) => `<span class="tag tag-alerta">${d.area}: ${esc(d.acao)}</span>`).join(" ")}</div>
+    </div>`;
+  }
+  return `<div class="relatorio-alinhado">✅ Decisões coerentes com a Estratégia Genérica do plano (${PERFIL_LABEL[al.perfilPlano]}).</div>`;
+}
+
 function contarDecisoesDoTime(teamId) {
   return jogoDecisoesDoTime.filter((d) => d.team_id === teamId).length;
 }
@@ -2194,8 +2319,31 @@ function prazoRestanteTexto(prazoISO) {
   if (diff <= 0) return "prazo esgotado";
   const horas = Math.floor(diff / 3600000);
   const min = Math.floor((diff % 3600000) / 60000);
-  if (horas > 0) return `${horas}h ${min}min restantes`;
-  return `${min}min restantes`;
+  const seg = Math.floor((diff % 60000) / 1000);
+  if (horas > 0) return `${horas}h ${min}min ${seg}s restantes`;
+  if (min > 0) return `${min}min ${seg}s restantes`;
+  return `${seg}s restantes`;
+}
+
+// cronômetro ao vivo: um span com data-cronometro="<prazo ISO>" se atualiza sozinho a cada segundo
+function cronometroSpan(prazoISO) {
+  if (!prazoISO) return "sem prazo definido";
+  return `<span class="cronometro-vivo" data-cronometro="${prazoISO}">${prazoRestanteTexto(prazoISO)}</span>`;
+}
+
+function atualizarCronometrosNaTela() {
+  document.querySelectorAll("[data-cronometro]").forEach((el) => {
+    const prazo = el.getAttribute("data-cronometro");
+    const texto = prazoRestanteTexto(prazo);
+    el.textContent = texto;
+    el.classList.toggle("cronometro-esgotado", texto === "prazo esgotado");
+  });
+}
+
+function iniciarCronometroGlobal() {
+  if (window.__cronometroIniciado) return;
+  window.__cronometroIniciado = true;
+  setInterval(atualizarCronometrosNaTela, 1000);
 }
 
 // ===================== BUSINESS GAME — DEMONSTRAÇÕES CONTÁBEIS =====================
@@ -2305,6 +2453,8 @@ let jogoMeuTimeId = null;
 let jogoMinhasDecisoesRascunho = {};
 let jogoCanalRealtime = null;
 let jogoUltimoRelatorio = null; // guarda o resultado do fechamento da última rodada, para exibir o "relatório da rodada"
+let jogoRelatoriosPorRodada = {}; // relatórios de TODAS as rodadas fechadas já lidos do banco (numero -> itens), só para facilitador
+let jogoRelatorioAbertoNumero = null; // qual número de rodada está expandido no navegador de relatórios do facilitador
 
 function souFacilitador() {
   return minhaRole === "facilitador" || minhaRole === "admin";
@@ -2357,6 +2507,20 @@ async function abrirSessaoJogo(sessionId) {
   }
   jogoView = souFacilitador() ? "facilitador" : "time";
   jogoMinhasDecisoesRascunho = {};
+  jogoRelatoriosPorRodada = {};
+  if (souFacilitador()) {
+    const rodadasFechadas = jogoRodadas.filter((r) => r.status === "fechada");
+    if (rodadasFechadas.length) {
+      const { data: relatorios } = await sbClient
+        .from("game_round_reports")
+        .select("round_id, relatorio")
+        .in("round_id", rodadasFechadas.map((r) => r.id));
+      (relatorios || []).forEach((r) => {
+        const rodada = rodadasFechadas.find((x) => x.id === r.round_id);
+        if (rodada) jogoRelatoriosPorRodada[rodada.numero] = r.relatorio;
+      });
+    }
+  }
   assinarRealtimeJogo(sessionId);
   renderStageOnly();
 }
@@ -2450,13 +2614,16 @@ async function fecharRodadaAtual() {
       eventoNome = sortearEvento(team.estado).nome;
     }
 
+    const { data: planoRow } = await sbClient.from("team_plans").select("plano").eq("team_id", team.id).maybeSingle();
+    const planoTime = planoRow ? planoRow.plano : null;
+
     const contexto = {
       numeroRodada,
       eventoNome,
       rodadaConcorrente: jogoSessaoAtual.rodada_concorrente,
       concorrenteJaChegou: team.concorrente_ja_chegou
     };
-    const resultado = resolverRodadaTime(team, decisoesTime, contexto);
+    const resultado = resolverRodadaTime(team, decisoesTime, contexto, planoTime);
     const ultimoSnapshot = resultado.historico[resultado.historico.length - 1];
     const linhasContabeis = new Set();
     ultimoSnapshot.efeitosAplicados.forEach((ap) => {
@@ -2485,12 +2652,15 @@ async function fecharRodadaAtual() {
       statusAnterior: team.status,
       statusNovo: resultado.status,
       marcoConcorrente: resultado.historico[resultado.historico.length - 1].marcoConcorrente,
-      linhasContabeis: Array.from(linhasContabeis)
+      linhasContabeis: Array.from(linhasContabeis),
+      alinhamentoPlano: ultimoSnapshot.alinhamentoPlano
     });
   }
 
   await sbClient.from("game_rounds").update({ status: "fechada" }).eq("id", rodadaAberta.id);
+  await sbClient.from("game_round_reports").upsert({ round_id: rodadaAberta.id, relatorio }, { onConflict: "round_id" });
   jogoUltimoRelatorio = { numeroRodada, itens: relatorio };
+  jogoRelatorioAbertoNumero = numeroRodada;
   await abrirSessaoJogo(jogoSessaoAtual.id);
 }
 // ===================== BUSINESS GAME — PAINEL DO FACILITADOR =====================
@@ -2536,6 +2706,8 @@ function renderPainelFacilitador() {
   const sessao = jogoSessaoAtual;
   const rodadaAberta = jogoRodadas.find((r) => r.status === "aberta");
   const ultimaFechada = [...jogoRodadas].reverse().find((r) => r.status === "fechada");
+  const rodadasComRelatorio = jogoRodadas.filter((r) => r.status === "fechada" && jogoRelatoriosPorRodada[r.numero]).sort((a, b) => b.numero - a.numero);
+  const numeroRelatorioAberto = jogoRelatorioAbertoNumero !== null ? jogoRelatorioAbertoNumero : (ultimaFechada ? ultimaFechada.numero : null);
 
   return `
     <div class="stage-head">
@@ -2544,7 +2716,14 @@ function renderPainelFacilitador() {
       <p class="lede">Rodada ${sessao.rodada_atual} de ${sessao.total_rodadas} · concorrente chega na rodada ${sessao.rodada_concorrente || "—"} · <button class="link-btn" type="button" data-action="jogo-voltar-lista">← voltar às partidas</button></p>
     </div>
 
-    ${jogoUltimoRelatorio ? renderRelatorioRodada(jogoUltimoRelatorio) : ""}
+    ${rodadasComRelatorio.length ? `
+    <div class="card">
+      <div class="card-kicker">Relatórios de rodada (só você vê — os times nunca veem os rivais)</div>
+      <div class="minicaso-botoes">
+        ${rodadasComRelatorio.map((r) => `<button type="button" class="btn btn-ghost btn-xs ${numeroRelatorioAberto === r.numero ? "active" : ""}" data-action="jogo-ver-relatorio" data-numero="${r.numero}">Rodada ${r.numero}</button>`).join("")}
+      </div>
+      ${numeroRelatorioAberto !== null && jogoRelatoriosPorRodada[numeroRelatorioAberto] ? renderRelatorioRodada({ numeroRodada: numeroRelatorioAberto, itens: jogoRelatoriosPorRodada[numeroRelatorioAberto] }) : ""}
+    </div>` : ""}
 
     <div class="card">
       <div class="card-kicker">Times</div>
@@ -2569,7 +2748,7 @@ function renderPainelFacilitador() {
     <div class="card">
       <div class="card-kicker">Controle de rodada</div>
       ${rodadaAberta ? `
-        <p>Rodada <strong>${rodadaAberta.numero}</strong> aberta ${rodadaAberta.prazo ? `· prazo: ${new Date(rodadaAberta.prazo).toLocaleString("pt-BR")} (${prazoRestanteTexto(rodadaAberta.prazo)})` : "· sem prazo definido"}</p>
+        <p>Rodada <strong>${rodadaAberta.numero}</strong> aberta ${rodadaAberta.prazo ? `· prazo: ${new Date(rodadaAberta.prazo).toLocaleString("pt-BR")} (${cronometroSpan(rodadaAberta.prazo)})` : "· sem prazo definido"}</p>
         <button class="btn btn-primary" type="button" data-action="jogo-fechar-rodada">Fechar rodada e calcular resultado</button>
       ` : `
         <p>${ultimaFechada ? `Última rodada fechada: ${ultimaFechada.numero}.` : "Nenhuma rodada aberta ainda."} ${sessao.rodada_atual >= sessao.total_rodadas ? "Esta partida já chegou ao total de rodadas." : ""}</p>
@@ -2612,6 +2791,21 @@ function renderPainelFacilitador() {
   `;
 }
 
+function resumoPlanoTime(plano) {
+  if (!plano || !Object.keys(plano).length) {
+    return `<div class="card"><div class="card-kicker">Plano estratégico do time</div><p class="muted">Este time ainda não preencheu o Planejamento Estratégico.</p></div>`;
+  }
+  const perfil = estrategiaDominanteDoPlano(plano);
+  const missao = plano.mv && plano.mv.missaoFutura ? plano.mv.missaoFutura : (plano.mv && plano.mv.missaoAtual) || "";
+  const swotCount = plano.swot ? (plano.swot.forcas || []).length + (plano.swot.fraquezas || []).length + (plano.swot.oportunidades || []).length + (plano.swot.ameacas || []).length : 0;
+  return `<div class="card">
+    <div class="card-kicker">Plano estratégico do time</div>
+    <div class="dre-linha"><span>Estratégia genérica dominante</span><span>${perfil ? PERFIL_LABEL[perfil] : "ainda não definida"}</span></div>
+    <div class="dre-linha"><span>Itens na SWOT</span><span>${swotCount}</span></div>
+    ${missao ? `<p class="card-note" style="margin-top:8px"><strong>Missão:</strong> ${esc(missao)}</p>` : ""}
+  </div>`;
+}
+
 function renderRelatorioRodada(relatorio) {
   return `
     <div class="card card-relatorio">
@@ -2626,6 +2820,7 @@ function renderRelatorioRodada(relatorio) {
           ${item.evento ? `<div class="relatorio-evento">🎲 Evento: ${esc(item.evento)}</div>` : `<div class="muted">Sem evento nesta rodada.</div>`}
           <div class="relatorio-decisoes">${Object.entries(item.decisoes).map(([area, acao]) => `<span class="tag">${area}: ${esc(acao)}</span>`).join(" ")}</div>
           ${item.linhasContabeis && item.linhasContabeis.length ? `<div class="relatorio-contabil">📊 Linhas contábeis afetadas: ${item.linhasContabeis.map((l) => `<span class="tag tag-contabil">${esc(l)}</span>`).join(" ")}</div>` : ""}
+          ${renderAvisoAlinhamento(item.alinhamentoPlano)}
           ${item.statusNovo !== item.statusAnterior ? `<div class="relatorio-status-mudou">⚠️ Situação mudou: ${STATUS_LABEL[item.statusNovo]}</div>` : ""}
         </div>`;
       }).join("")}
@@ -2673,7 +2868,7 @@ function renderPainelTime() {
     </div>` : rodadaAberta ? `
     <div class="card">
       <div class="card-kicker">Rodada ${rodadaAberta.numero} — decisões da sua equipe</div>
-      <p class="card-note">${rodadaAberta.prazo ? `Prazo: ${new Date(rodadaAberta.prazo).toLocaleString("pt-BR")} (${prazoRestanteTexto(rodadaAberta.prazo)})` : "Sem prazo definido — combine com o facilitador."} Escolham 1 ação por área. Podem mudar de ideia até o facilitador fechar a rodada.</p>
+      <p class="card-note">${rodadaAberta.prazo ? `Prazo: ${new Date(rodadaAberta.prazo).toLocaleString("pt-BR")} (${cronometroSpan(rodadaAberta.prazo)})` : "Sem prazo definido — combine com o facilitador."} Escolham 1 ação por área. Podem mudar de ideia até o facilitador fechar a rodada — só a última escolha em cada área conta.</p>
       ${seletorDecisoes(minhasDecisoes, false)}
     </div>` : `
     <div class="card">
@@ -2697,11 +2892,17 @@ function renderPainelTime() {
       ${painelHistoricoPreJogo()}
     </details>
 
+    ${meuTime.historico && meuTime.historico.length && meuTime.historico[meuTime.historico.length - 1].alinhamentoPlano && meuTime.historico[meuTime.historico.length - 1].alinhamentoPlano.perfilPlano ? `
+    <div class="card">
+      <div class="card-kicker">Alinhamento com o seu plano estratégico</div>
+      ${renderAvisoAlinhamento(meuTime.historico[meuTime.historico.length - 1].alinhamentoPlano)}
+    </div>` : ""}
+
     ${meuTime.historico && meuTime.historico.length ? `
     <div class="card">
       <div class="card-kicker">Histórico de rodadas</div>
       <table class="historico-table">
-        <thead><tr><th>Rodada</th><th>Índice final</th><th>Decisões</th><th>Linhas contábeis afetadas</th><th>Evento</th><th>Situação</th></tr></thead>
+        <thead><tr><th>Rodada</th><th>Índice final</th><th>Decisões</th><th>Linhas contábeis afetadas</th><th>Plano</th><th>Evento</th><th>Situação</th></tr></thead>
         <tbody>
           ${meuTime.historico.map((h) => {
             const linhas = new Set();
@@ -2713,10 +2914,13 @@ function renderPainelTime() {
               if (ap.tipo === "pressao_concorrencia") efeitos = GAME_DESIGN.marcoConcorrente.pressaoPassiva;
               if (efeitos) linhasContabeisTocadas(efeitos).forEach((l) => linhas.add(l));
             });
+            const al = h.alinhamentoPlano;
+            const alIcone = !al || !al.perfilPlano ? "—" : al.penalidadeAplicada ? "🔴" : al.desalinhado ? "⚠️" : "✅";
             return `<tr>
             <td>${h.rodada}</td><td>${h.indiceFinal.toFixed(1)}</td>
             <td>${Object.entries(h.decisoes || {}).map(([area, acao]) => `<span class="tag">${esc(acao)}</span>`).join(" ")}</td>
             <td>${Array.from(linhas).map((l) => `<span class="tag tag-contabil">${esc(l)}</span>`).join(" ") || "—"}</td>
+            <td title="${al && al.perfilPlano ? PERFIL_LABEL[al.perfilPlano] : ""}">${alIcone}</td>
             <td>${h.evento ? esc(h.evento) : "—"}${h.marcoConcorrente ? " · 📍 concorrente chegou" : ""}</td>
             <td>${STATUS_LABEL[h.status]}</td>
           </tr>`;
@@ -2799,10 +3003,18 @@ async function handleJogoAction(action, el) {
     const time = jogoTimes.find((t) => t.id === teamId);
     const container = document.getElementById("jogoDetalheTime");
     if (time && container) {
-      container.innerHTML = painelIndicadores(time.estado) + painelDemonstracoes(time.estado);
+      container.innerHTML = painelIndicadores(time.estado) + painelDemonstracoes(time.estado) + `<div class="card-note">Carregando resumo do plano…</div>`;
       document.querySelectorAll('[data-action="jogo-ver-time-detalhe"]').forEach((b) => b.classList.remove("active"));
       el.classList.add("active");
+      const { data } = await sbClient.from("team_plans").select("plano").eq("team_id", teamId).maybeSingle();
+      container.innerHTML = painelIndicadores(time.estado) + painelDemonstracoes(time.estado) + resumoPlanoTime(data ? data.plano : null);
     }
+    return;
+  }
+
+  if (action === "jogo-ver-relatorio") {
+    jogoRelatorioAbertoNumero = parseInt(el.getAttribute("data-numero"), 10);
+    renderStageOnly();
     return;
   }
 
@@ -2885,8 +3097,48 @@ function mesclarComPadrao(remote) {
 
 function souEditor() { return minhaRole === "editor" || minhaRole === "admin"; }
 
+let planoTimeAtualId = null;
+let planoTimeAtualNome = "";
+let meusTimesDoUsuario = [];
+let planoCanalRealtime = null;
+
+async function carregarMeusTimes() {
+  if (!window.__meuUserId) { meusTimesDoUsuario = []; return; }
+  const { data } = await sbClient
+    .from("game_team_members")
+    .select("team_id, game_teams(id, nome, session_id, game_sessions(nome))")
+    .eq("user_id", window.__meuUserId);
+  meusTimesDoUsuario = (data || [])
+    .filter((r) => r.game_teams)
+    .map((r) => ({
+      teamId: r.game_teams.id,
+      teamNome: r.game_teams.nome,
+      sessaoNome: r.game_teams.game_sessions ? r.game_teams.game_sessions.nome : ""
+    }));
+}
+
+async function selecionarTimeParaPlano(teamId) {
+  const time = meusTimesDoUsuario.find((t) => t.teamId === teamId);
+  planoTimeAtualId = teamId;
+  planoTimeAtualNome = time ? time.teamNome : "";
+  let { data } = await sbClient.from("team_plans").select("plano").eq("team_id", teamId).maybeSingle();
+  if (!data) {
+    const novo = novoEstadoPadrao();
+    await sbClient.from("team_plans").insert({ team_id: teamId, plano: novo, atualizado_por: meuNome || meuEmail });
+    data = { plano: novo };
+  }
+  S = mesclarComPadrao(data.plano || {});
+  lastSyncedAt = S.meta.atualizadoEm || 0;
+  if (!S.participantes.includes(meuNome)) {
+    S.participantes.push(meuNome);
+    scheduleSave();
+  }
+  assinarRealtimePlano(teamId);
+  renderAll();
+}
+
 function scheduleSave() {
-  if (!souEditor()) return;
+  if (!souEditor() || !planoTimeAtualId) return;
   const st = document.getElementById("saveStatus");
   if (st) st.textContent = "Editando…";
   clearTimeout(saveTimer);
@@ -2894,7 +3146,7 @@ function scheduleSave() {
 }
 
 async function doSave() {
-  if (!souEditor()) return;
+  if (!souEditor() || !planoTimeAtualId) return;
   saving = true;
   const agoraIso = new Date().toISOString();
   S.meta.atualizadoEm = Date.now();
@@ -2903,9 +3155,9 @@ async function doSave() {
   try {
     if (statusEl) statusEl.textContent = "Salvando…";
     const { error } = await sbClient
-      .from("plano")
-      .update({ dados: S, atualizado_em: agoraIso, atualizado_por: meuNome || meuEmail })
-      .eq("id", 1);
+      .from("team_plans")
+      .update({ plano: S, atualizado_em: agoraIso, atualizado_por: meuNome || meuEmail })
+      .eq("team_id", planoTimeAtualId);
     if (error) throw error;
     lastSyncedAt = S.meta.atualizadoEm;
     if (statusEl) statusEl.textContent = "Salvo · sincronizado com a equipe";
@@ -2917,29 +3169,16 @@ async function doSave() {
   }
 }
 
-async function carregarDados() {
-  const { data, error } = await sbClient.from("plano").select("dados").eq("id", 1).single();
-  if (!error && data && data.dados && Object.keys(data.dados).length) {
-    S = mesclarComPadrao(data.dados);
-    lastSyncedAt = S.meta.atualizadoEm || 0;
-  }
-  if (!S.participantes.includes(meuNome)) {
-    S.participantes.push(meuNome);
-    scheduleSave();
-  }
-  renderShell();
-  assinarRealtime();
-}
-
-function assinarRealtime() {
-  sbClient
-    .channel("plano-realtime")
-    .on("postgres_changes", { event: "UPDATE", schema: "public", table: "plano", filter: "id=eq.1" }, (payload) => {
+function assinarRealtimePlano(teamId) {
+  if (planoCanalRealtime) { sbClient.removeChannel(planoCanalRealtime); planoCanalRealtime = null; }
+  planoCanalRealtime = sbClient
+    .channel("plano-time-" + teamId)
+    .on("postgres_changes", { event: "UPDATE", schema: "public", table: "team_plans", filter: "team_id=eq." + teamId }, (payload) => {
       if (saving) return;
       const active = document.activeElement;
       const editando = active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA");
       if (editando) return;
-      const remote = payload.new.dados;
+      const remote = payload.new.plano;
       const remoteTime = (remote.meta && remote.meta.atualizadoEm) || 0;
       if (remoteTime > lastSyncedAt) {
         S = mesclarComPadrao(remote);
@@ -2955,6 +3194,7 @@ function assinarRealtime() {
 // ===================== LOGIN / SESSÃO =====================
 
 async function iniciarApp() {
+  iniciarCronometroGlobal();
   const { data: { session } } = await sbClient.auth.getSession();
   if (session) {
     await aoLogar(session);
@@ -2977,7 +3217,8 @@ async function aoLogar(session) {
   }
   minhaRole = perfil.role || "viewer";
   meuNome = perfil.nome || meuEmail.split("@")[0];
-  await carregarDados();
+  await carregarMeusTimes();
+  renderShell();
 }
 
 function renderLogin() {
