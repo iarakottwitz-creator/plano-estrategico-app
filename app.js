@@ -2311,12 +2311,12 @@ function souFacilitador() {
 }
 
 async function carregarSessoesJogo() {
-  const { data, error } = await supabase.from("game_sessions").select("*").order("criado_em", { ascending: false });
+  const { data, error } = await sbClient.from("game_sessions").select("*").order("criado_em", { ascending: false });
   if (!error) jogoSessoes = data || [];
 }
 
 async function criarSessaoJogo(nome, totalRodadas, rodadaConcorrente) {
-  const { data, error } = await supabase.from("game_sessions").insert({
+  const { data, error } = await sbClient.from("game_sessions").insert({
     nome, total_rodadas: totalRodadas, rodada_concorrente: rodadaConcorrente || null, criado_por: sessaoUsuarioId()
   }).select().single();
   if (!error) { await carregarSessoesJogo(); await abrirSessaoJogo(data.id); }
@@ -2324,22 +2324,22 @@ async function criarSessaoJogo(nome, totalRodadas, rodadaConcorrente) {
 }
 
 function sessaoUsuarioId() {
-  // supabase.auth guarda a sessão internamente; recuperamos o id síncrono via getSession já resolvido no login
+  // sbClient.auth guarda a sessão internamente; recuperamos o id síncrono via getSession já resolvido no login
   return window.__meuUserId || null;
 }
 
 async function abrirSessaoJogo(sessionId) {
   const [{ data: sessao }, { data: times }, { data: rodadas }] = await Promise.all([
-    supabase.from("game_sessions").select("*").eq("id", sessionId).single(),
-    supabase.from("game_teams").select("*").eq("session_id", sessionId).order("nome"),
-    supabase.from("game_rounds").select("*").eq("session_id", sessionId).order("numero")
+    sbClient.from("game_sessions").select("*").eq("id", sessionId).single(),
+    sbClient.from("game_teams").select("*").eq("session_id", sessionId).order("nome"),
+    sbClient.from("game_rounds").select("*").eq("session_id", sessionId).order("numero")
   ]);
   jogoSessaoAtual = sessao || null;
   jogoTimes = times || [];
   jogoRodadas = rodadas || [];
   const rodadaAberta = jogoRodadas.find((r) => r.status === "aberta");
   if (rodadaAberta) {
-    const { data: decisoes } = await supabase.from("game_decisions").select("*").eq("round_id", rodadaAberta.id);
+    const { data: decisoes } = await sbClient.from("game_decisions").select("*").eq("round_id", rodadaAberta.id);
     jogoDecisoesDoTime = decisoes || [];
   } else {
     jogoDecisoesDoTime = [];
@@ -2347,7 +2347,7 @@ async function abrirSessaoJogo(sessionId) {
   // descobre se sou membro de algum time desta sessão
   jogoMeuTimeId = null;
   if (window.__meuUserId) {
-    const { data: meuVinculo } = await supabase
+    const { data: meuVinculo } = await sbClient
       .from("game_team_members")
       .select("team_id, game_teams!inner(session_id)")
       .eq("user_id", window.__meuUserId)
@@ -2362,8 +2362,8 @@ async function abrirSessaoJogo(sessionId) {
 }
 
 function assinarRealtimeJogo(sessionId) {
-  if (jogoCanalRealtime) { supabase.removeChannel(jogoCanalRealtime); jogoCanalRealtime = null; }
-  jogoCanalRealtime = supabase
+  if (jogoCanalRealtime) { sbClient.removeChannel(jogoCanalRealtime); jogoCanalRealtime = null; }
+  jogoCanalRealtime = sbClient
     .channel("jogo-" + sessionId)
     .on("postgres_changes", { event: "*", schema: "public", table: "game_teams", filter: "session_id=eq." + sessionId }, () => recarregarSessaoSilencioso())
     .on("postgres_changes", { event: "*", schema: "public", table: "game_rounds", filter: "session_id=eq." + sessionId }, () => recarregarSessaoSilencioso())
@@ -2375,16 +2375,16 @@ async function recarregarSessaoSilencioso() {
   if (!jogoSessaoAtual) return;
   const sessionId = jogoSessaoAtual.id;
   const [{ data: sessao }, { data: times }, { data: rodadas }] = await Promise.all([
-    supabase.from("game_sessions").select("*").eq("id", sessionId).single(),
-    supabase.from("game_teams").select("*").eq("session_id", sessionId).order("nome"),
-    supabase.from("game_rounds").select("*").eq("session_id", sessionId).order("numero")
+    sbClient.from("game_sessions").select("*").eq("id", sessionId).single(),
+    sbClient.from("game_teams").select("*").eq("session_id", sessionId).order("nome"),
+    sbClient.from("game_rounds").select("*").eq("session_id", sessionId).order("numero")
   ]);
   jogoSessaoAtual = sessao || jogoSessaoAtual;
   jogoTimes = times || jogoTimes;
   jogoRodadas = rodadas || jogoRodadas;
   const rodadaAberta = jogoRodadas.find((r) => r.status === "aberta");
   if (rodadaAberta) {
-    const { data: decisoes } = await supabase.from("game_decisions").select("*").eq("round_id", rodadaAberta.id);
+    const { data: decisoes } = await sbClient.from("game_decisions").select("*").eq("round_id", rodadaAberta.id);
     jogoDecisoesDoTime = decisoes || [];
   }
   if (modoAtual === "jogo") renderStageOnly();
@@ -2392,7 +2392,7 @@ async function recarregarSessaoSilencioso() {
 
 async function criarTimeJogo(nome) {
   const novoEstado = estadoInicial();
-  const { error } = await supabase.from("game_teams").insert({
+  const { error } = await sbClient.from("game_teams").insert({
     session_id: jogoSessaoAtual.id, nome, estado: novoEstado
   });
   if (!error) await abrirSessaoJogo(jogoSessaoAtual.id);
@@ -2400,20 +2400,20 @@ async function criarTimeJogo(nome) {
 }
 
 async function adicionarMembroPorEmail(teamId, email) {
-  const { data: perfil, error: erroPerfil } = await supabase.from("profiles").select("id").eq("email", email.trim()).maybeSingle();
+  const { data: perfil, error: erroPerfil } = await sbClient.from("profiles").select("id").eq("email", email.trim()).maybeSingle();
   if (erroPerfil || !perfil) return { error: "Não achei ninguém com esse e-mail entre as pessoas convidadas." };
-  const { error } = await supabase.from("game_team_members").insert({ team_id: teamId, user_id: perfil.id });
+  const { error } = await sbClient.from("game_team_members").insert({ team_id: teamId, user_id: perfil.id });
   if (!error) await abrirSessaoJogo(jogoSessaoAtual.id);
   return { error: error ? "Essa pessoa já está em um time desta partida, ou algo deu errado." : null };
 }
 
 async function abrirNovaRodada(prazoISO) {
   const numero = (jogoSessaoAtual.rodada_atual || 0) + 1;
-  const { error } = await supabase.from("game_rounds").insert({
+  const { error } = await sbClient.from("game_rounds").insert({
     session_id: jogoSessaoAtual.id, numero, prazo: prazoISO || null, status: "aberta"
   });
   if (!error) {
-    await supabase.from("game_sessions").update({ rodada_atual: numero, status: "ativa" }).eq("id", jogoSessaoAtual.id);
+    await sbClient.from("game_sessions").update({ rodada_atual: numero, status: "ativa" }).eq("id", jogoSessaoAtual.id);
     await abrirSessaoJogo(jogoSessaoAtual.id);
   }
   return error;
@@ -2422,7 +2422,7 @@ async function abrirNovaRodada(prazoISO) {
 async function salvarMinhaDecisao(area, acao) {
   const rodadaAberta = jogoRodadas.find((r) => r.status === "aberta");
   if (!rodadaAberta || !jogoMeuTimeId) return;
-  await supabase.from("game_decisions").upsert({
+  await sbClient.from("game_decisions").upsert({
     round_id: rodadaAberta.id, team_id: jogoMeuTimeId, area, acao, decidido_por: window.__meuUserId
   }, { onConflict: "round_id,team_id,area" });
   jogoMinhasDecisoesRascunho[area] = acao;
@@ -2468,7 +2468,7 @@ async function fecharRodadaAtual() {
       if (efeitos) linhasContabeisTocadas(efeitos).forEach((l) => linhasContabeis.add(l));
     });
 
-    await supabase.from("game_teams").update({
+    await sbClient.from("game_teams").update({
       estado: resultado.estado,
       status: resultado.status,
       rodadas_risco: resultado.rodadasRisco,
@@ -2489,7 +2489,7 @@ async function fecharRodadaAtual() {
     });
   }
 
-  await supabase.from("game_rounds").update({ status: "fechada" }).eq("id", rodadaAberta.id);
+  await sbClient.from("game_rounds").update({ status: "fechada" }).eq("id", rodadaAberta.id);
   jogoUltimoRelatorio = { numeroRodada, itens: relatorio };
   await abrirSessaoJogo(jogoSessaoAtual.id);
 }
@@ -2742,7 +2742,7 @@ function renderJogo() {
 async function handleJogoAction(action, el) {
   if (action === "jogo-voltar-lista") {
     jogoSessaoAtual = null;
-    if (jogoCanalRealtime) { supabase.removeChannel(jogoCanalRealtime); jogoCanalRealtime = null; }
+    if (jogoCanalRealtime) { sbClient.removeChannel(jogoCanalRealtime); jogoCanalRealtime = null; }
     await carregarSessoesJogo();
     renderStageOnly();
     return;
@@ -2808,26 +2808,26 @@ async function handleJogoAction(action, el) {
 
   if (action === "jogo-lancar-minicaso") {
     const i = parseInt(el.getAttribute("data-i"), 10);
-    await supabase.from("game_sessions").update({ mini_caso_atual: i, mini_caso_revelado: false }).eq("id", jogoSessaoAtual.id);
+    await sbClient.from("game_sessions").update({ mini_caso_atual: i, mini_caso_revelado: false }).eq("id", jogoSessaoAtual.id);
     await abrirSessaoJogo(jogoSessaoAtual.id);
     return;
   }
 
   if (action === "jogo-revelar-minicaso") {
-    await supabase.from("game_sessions").update({ mini_caso_revelado: true }).eq("id", jogoSessaoAtual.id);
+    await sbClient.from("game_sessions").update({ mini_caso_revelado: true }).eq("id", jogoSessaoAtual.id);
     await abrirSessaoJogo(jogoSessaoAtual.id);
     return;
   }
 
   if (action === "jogo-esconder-minicaso") {
-    await supabase.from("game_sessions").update({ mini_caso_atual: null, mini_caso_revelado: false }).eq("id", jogoSessaoAtual.id);
+    await sbClient.from("game_sessions").update({ mini_caso_atual: null, mini_caso_revelado: false }).eq("id", jogoSessaoAtual.id);
     await abrirSessaoJogo(jogoSessaoAtual.id);
     return;
   }
 }
 // ===================== SUPABASE: CLIENTE, LOGIN, SINCRONIZAÇÃO =====================
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let S = novoEstadoPadrao();
 let meuNome = "";
@@ -2902,7 +2902,7 @@ async function doSave() {
   const statusEl = document.getElementById("saveStatus");
   try {
     if (statusEl) statusEl.textContent = "Salvando…";
-    const { error } = await supabase
+    const { error } = await sbClient
       .from("plano")
       .update({ dados: S, atualizado_em: agoraIso, atualizado_por: meuNome || meuEmail })
       .eq("id", 1);
@@ -2918,7 +2918,7 @@ async function doSave() {
 }
 
 async function carregarDados() {
-  const { data, error } = await supabase.from("plano").select("dados").eq("id", 1).single();
+  const { data, error } = await sbClient.from("plano").select("dados").eq("id", 1).single();
   if (!error && data && data.dados && Object.keys(data.dados).length) {
     S = mesclarComPadrao(data.dados);
     lastSyncedAt = S.meta.atualizadoEm || 0;
@@ -2932,7 +2932,7 @@ async function carregarDados() {
 }
 
 function assinarRealtime() {
-  supabase
+  sbClient
     .channel("plano-realtime")
     .on("postgres_changes", { event: "UPDATE", schema: "public", table: "plano", filter: "id=eq.1" }, (payload) => {
       if (saving) return;
@@ -2955,13 +2955,13 @@ function assinarRealtime() {
 // ===================== LOGIN / SESSÃO =====================
 
 async function iniciarApp() {
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { session } } = await sbClient.auth.getSession();
   if (session) {
     await aoLogar(session);
   } else {
     renderLogin();
   }
-  supabase.auth.onAuthStateChange((event, session) => {
+  sbClient.auth.onAuthStateChange((event, session) => {
     if (event === "SIGNED_IN" && session) aoLogar(session);
     if (event === "SIGNED_OUT") location.reload();
   });
@@ -2970,7 +2970,7 @@ async function iniciarApp() {
 async function aoLogar(session) {
   meuEmail = session.user.email;
   window.__meuUserId = session.user.id;
-  let { data: perfil, error } = await supabase.from("profiles").select("nome, role").eq("id", session.user.id).single();
+  let { data: perfil, error } = await sbClient.from("profiles").select("nome, role").eq("id", session.user.id).single();
   if (error || !perfil) {
     // perfil ainda não existe (ex: gatilho não configurado) — trata como visualizador
     perfil = { nome: meuEmail.split("@")[0], role: "viewer" };
@@ -3004,7 +3004,7 @@ async function fazerLogin() {
   const senha = document.getElementById("loginSenha").value;
   const erroEl = document.getElementById("loginErro");
   erroEl.textContent = "Entrando…";
-  const { error } = await supabase.auth.signInWithPassword({ email, password: senha });
+  const { error } = await sbClient.auth.signInWithPassword({ email, password: senha });
   if (error) erroEl.textContent = "E-mail ou senha inválidos, ou o convite ainda não foi ativado.";
 }
 
@@ -3012,12 +3012,12 @@ async function recuperarSenha() {
   const email = document.getElementById("loginEmail").value.trim();
   const erroEl = document.getElementById("loginErro");
   if (!email) { erroEl.textContent = "Digite seu e-mail primeiro."; return; }
-  await supabase.auth.resetPasswordForEmail(email);
+  await sbClient.auth.resetPasswordForEmail(email);
   erroEl.textContent = "Enviamos um link de redefinição de senha para " + email;
 }
 
 async function sair() {
-  await supabase.auth.signOut();
+  await sbClient.auth.signOut();
 }
 
 iniciarApp();
