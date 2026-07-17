@@ -495,13 +495,9 @@ function renderShell() {
   if (modoAtual === "jogo" && !jogoSessoes.length) carregarSessoesJogo().then(renderStageOnly);
 }
 
+let investimentoDebounceTimers = {};
 function onChangeDelegated(e) {
-  const radio = e.target.closest("[data-jogo-decisao]");
-  if (radio) {
-    const area = radio.getAttribute("data-jogo-decisao");
-    jogoMinhasDecisoesRascunho[area] = radio.value;
-    salvarMinhaDecisao(area, radio.value);
-  }
+  // reservado para eventos futuros de 'change' (checkbox/select); investimentos usam 'input', ver onInputDelegated
 }
 
 function onNavClick(e) {
@@ -512,6 +508,16 @@ function onNavClick(e) {
 }
 
 function onInputDelegated(e) {
+  const investInput = e.target.closest("[data-jogo-investimento]");
+  if (investInput) {
+    const campoId = investInput.getAttribute("data-jogo-investimento");
+    const valor = Math.max(0, Number(investInput.value) || 0);
+    jogoMeusInvestimentosRascunho[campoId] = valor;
+    atualizarBarraOrcamentoDOM();
+    clearTimeout(investimentoDebounceTimers[campoId]);
+    investimentoDebounceTimers[campoId] = setTimeout(() => salvarMeuInvestimento(campoId, valor), 700);
+    return;
+  }
   if (!souEditor()) return;
   const t = e.target;
   const pathStr = t.getAttribute("data-path");
@@ -519,6 +525,35 @@ function onInputDelegated(e) {
   const path = JSON.parse(pathStr);
   setPath(S, path, t.value);
   scheduleSave();
+}
+
+// atualiza só a barra de orçamento e o "efeito %" de cada campo, lendo os valores
+// direto do DOM — evita re-renderizar tudo e perder o foco de quem está digitando
+function atualizarBarraOrcamentoDOM() {
+  const inputs = document.querySelectorAll("[data-jogo-investimento]");
+  let total = 0;
+  inputs.forEach((inp) => {
+    const valor = Math.max(0, Number(inp.value) || 0);
+    total += valor;
+    const campo = campoPorId(inp.getAttribute("data-jogo-investimento"));
+    const fatorSpan = inp.closest(".investimento-item-input");
+    const fatorEl = fatorSpan ? fatorSpan.querySelector(".investimento-fator") : null;
+    if (fatorEl && campo) {
+      const fator = fatorInvestimento(valor, campo.valorReferencia);
+      fatorEl.textContent = valor > 0 ? "efeito " + Math.round(fator * 100) + "%" : "";
+    }
+  });
+  const barra = document.querySelector(".orcamento-barra");
+  if (!barra) return;
+  const orcamento = GAME_DESIGN.orcamentoPorRodada;
+  const restante = orcamento - total;
+  const estourou = restante < 0;
+  barra.classList.toggle("orcamento-estourado", estourou);
+  barra.innerHTML = `
+    <span>Orçamento da rodada: <strong>${fmtR$Curto(orcamento)}</strong></span>
+    <span>Alocado: <strong>${fmtR$Curto(total)}</strong></span>
+    <span>${estourou ? "Excedeu em " + fmtR$Curto(-restante) + " — reduza algum campo" : "Restante: " + fmtR$Curto(restante)}</span>
+  `;
 }
 
 function onClickDelegated(e) {
@@ -1870,6 +1905,142 @@ GAME_DESIGN.miniCasos = [
     explicacao: "Estrutura de custo fixo alto amplifica quedas de receita no resultado (alavancagem operacional). O Grupo B, com mais custo variável, reduz despesas junto com a queda de demanda e protege melhor a margem — o trade-off é menos previsibilidade para a equipe."
   }
 ];
+// ===================== EXTENSÃO: CAMPOS DE INVESTIMENTO (substitui o menu de decisões) =====================
+// Em vez de escolher entre frases prontas, o time aloca um orçamento da rodada
+// entre 12 campos de investimento (3 por área). O efeito de cada campo escala
+// com o valor investido, com retorno decrescente acima do valor de referência.
+
+GAME_DESIGN.orcamentoPorRodada = 450000; // R$ — total disponível por rodada, livre entre todos os campos
+
+GAME_DESIGN.camposInvestimento = {
+  Comercial: [
+    {
+      id: "marketing_relacionamento",
+      nome: "Marketing e relacionamento com clientes",
+      descricao: "Comunicação institucional, atendimento e fidelização de hospitais/operadoras e pacientes.",
+      valorReferencia: 40000,
+      perfilEstrategico: "diferenciacao",
+      tema: "Imagem",
+      efeitoBase: { C4: 8, G1: 10 }
+    },
+    {
+      id: "negociacao_preco",
+      nome: "Negociação comercial e política de preços",
+      descricao: "Descontos, condições comerciais e agressividade de preço para reter e ganhar contratos.",
+      valorReferencia: 35000,
+      perfilEstrategico: "custo",
+      tema: "Concorrência",
+      efeitoBase: { C1: 12, F1: -0.03 }
+    },
+    {
+      id: "diversificacao_carteira",
+      nome: "Diversificação e novos contratos",
+      descricao: "Buscar novos clientes/hospitais para reduzir a dependência de um só cliente grande.",
+      valorReferencia: 50000,
+      perfilEstrategico: null,
+      tema: "",
+      efeitoBase: { C2: -0.08, F1: -0.02, R2: 6 }
+    }
+  ],
+  Processos: [
+    {
+      id: "sistemas_dados",
+      nome: "Sistemas de gestão e dados",
+      descricao: "Tecnologia de gestão, prontuário, indicadores e rastreabilidade.",
+      valorReferencia: 40000,
+      perfilEstrategico: "diferenciacao",
+      tema: "",
+      efeitoBase: { P4: 18, F3: -0.03 }
+    },
+    {
+      id: "seguranca_protocolos",
+      nome: "Segurança e protocolos clínicos",
+      descricao: "Padronização de protocolos, checklists e avaliação de segurança do paciente.",
+      valorReferencia: 35000,
+      perfilEstrategico: "diferenciacao",
+      tema: "",
+      efeitoBase: { P2: -0.015, P1: 15 }
+    },
+    {
+      id: "capacidade_cobertura",
+      nome: "Capacidade e cobertura de atendimento",
+      descricao: "Ampliação de estrutura, plantão e nível de serviço.",
+      valorReferencia: 45000,
+      perfilEstrategico: "diferenciacao",
+      tema: "",
+      efeitoBase: { C4: 8, P2: -0.008, P3: 6, F1: -0.015 }
+    }
+  ],
+  RH: [
+    {
+      id: "contratacao_retencao",
+      nome: "Contratação e retenção de equipe",
+      descricao: "Mais equipe, redução de sobrecarga e programas de retenção de profissionais.",
+      valorReferencia: 50000,
+      perfilEstrategico: "diferenciacao",
+      tema: "Concorrência",
+      efeitoBase: { R2: -15, R3: 8, R1: -5, F1: -0.02 }
+    },
+    {
+      id: "capacitacao",
+      nome: "Capacitação e desenvolvimento",
+      descricao: "Formação técnica, treinamento e desenvolvimento de talento interno.",
+      valorReferencia: 30000,
+      perfilEstrategico: "diferenciacao",
+      tema: "",
+      efeitoBase: { P4: 5, R3: 4, R1: -3 }
+    },
+    {
+      id: "remuneracao_incentivos",
+      nome: "Programa de remuneração e incentivos",
+      descricao: "Bônus, plantão diferenciado e incentivos de permanência.",
+      valorReferencia: 35000,
+      perfilEstrategico: null,
+      tema: "",
+      efeitoBase: { R1: -6, F1: -0.015 }
+    }
+  ],
+  Financeiro: [
+    {
+      id: "cobranca_glosas",
+      nome: "Gestão ativa de recebíveis e glosas",
+      descricao: "Estrutura e processo de cobrança e acompanhamento de glosas junto às operadoras.",
+      valorReferencia: 30000,
+      perfilEstrategico: "custo",
+      tema: "",
+      efeitoBase: { F3: -0.035, F1: 0.015 }
+    },
+    {
+      id: "modernizacao_faturamento",
+      nome: "Modernização de faturamento e cobrança",
+      descricao: "Verticalização e melhoria dos processos de faturamento junto às operadoras.",
+      valorReferencia: 35000,
+      perfilEstrategico: "diferenciacao",
+      tema: "",
+      efeitoBase: { F3: -0.02, P4: 8 }
+    },
+    {
+      id: "reserva_reinvestimento",
+      nome: "Formação de reserva estratégica",
+      descricao: "Retenção de parte do resultado para reinvestir e formar fôlego financeiro.",
+      valorReferencia: 40000,
+      perfilEstrategico: "diferenciacao",
+      tema: "",
+      efeitoBase: { F4: 0.10, R4: -4 }
+    }
+  ]
+};
+
+// substitui o marco de mercado antigo (mitigação por nome de decisão) por mitigação por valor mínimo investido
+GAME_DESIGN.marcoConcorrente = {
+  choqueImediato: { C4: -8, F1: -0.02, C2: 0.05 },
+  pressaoPassiva: { C1: -3, R1: 2 },
+  campoMitigacaoComercial: "negociacao_preco",
+  campoMitigacaoRH: "contratacao_retencao"
+};
+
+// não usamos mais o menu de decisões prontas — mantido apenas como referência histórica, sem uso no motor
+delete GAME_DESIGN.decisoesPorArea;
 // ===================== MOTOR DO JOGO (funções puras) =====================
 // Depende de GAME_DESIGN (game-data.js) já carregado no escopo global.
 // Sem dependência de DOM ou Supabase — testável isoladamente com node.
@@ -1968,9 +2139,50 @@ function aplicarEfeitos(estado, efeitos) {
   return novo;
 }
 
-function encontrarAcao(area, nomeAcao) {
-  const lista = GAME_DESIGN.decisoesPorArea[area] || [];
-  return lista.find((a) => a.acao === nomeAcao) || lista[0];
+// ---------- Campos de investimento (substituem o menu de decisões prontas) ----------
+
+function todosOsCampos() {
+  const lista = [];
+  for (const area in GAME_DESIGN.camposInvestimento) {
+    GAME_DESIGN.camposInvestimento[area].forEach((c) => lista.push(Object.assign({ area }, c)));
+  }
+  return lista;
+}
+
+function campoPorId(id) {
+  return todosOsCampos().find((c) => c.id === id);
+}
+
+// retorno decrescente: até o valor de referência o efeito escala linear (0 a 100%);
+// acima da referência, o excedente vale só 40% do que valeria dentro da referência.
+function fatorInvestimento(valor, referencia) {
+  if (!referencia || referencia <= 0) return 0;
+  const razao = valor / referencia;
+  if (razao <= 1) return Math.max(0, razao);
+  return 1 + (razao - 1) * 0.4;
+}
+
+// investimentos: { campoId: valorEmReais, ... } — campos não incluídos contam como 0
+function aplicarInvestimentos(estado, investimentos) {
+  let novoEstado = Object.assign({}, estado);
+  let totalGasto = 0;
+  const efeitosAplicados = [];
+  todosOsCampos().forEach((campo) => {
+    const valor = Math.max(0, investimentos[campo.id] || 0);
+    totalGasto += valor;
+    if (valor > 0) {
+      const fator = fatorInvestimento(valor, campo.valorReferencia);
+      const efeitosEscalados = {};
+      for (const cod in campo.efeitoBase) efeitosEscalados[cod] = campo.efeitoBase[cod] * fator;
+      novoEstado = aplicarEfeitos(novoEstado, efeitosEscalados);
+      efeitosAplicados.push({ tipo: "investimento", area: campo.area, campoId: campo.id, campoNome: campo.nome, valor, fator, efeitos: efeitosEscalados });
+    }
+  });
+  if (totalGasto > 0) {
+    const folhaMensal = GAME_DESIGN.cenarioFinanceiro.folhaMensal;
+    novoEstado = aplicarEfeitos(novoEstado, { F2: -(totalGasto / folhaMensal) });
+  }
+  return { estado: novoEstado, totalGasto, efeitosAplicados };
 }
 
 function eventoPorNome(nome) {
@@ -1997,20 +2209,15 @@ function sortearEvento(estadoAtual, rand) {
 }
 
 // ---------- Resolução de uma rodada para UM time ----------
-// decisoesTime: { Comercial: "nome da ação", Processos: "...", RH: "...", Financeiro: "..." }
+// investimentos: { campoId: valorEmReais, ... } (12 campos possíveis, os que faltarem contam como 0)
 // contexto: { numeroRodada, eventoNome (ou null), rodadaConcorrente (numero ou null), concorrenteJaChegou (bool antes desta rodada) }
-function resolverRodadaTime(team, decisoesTime, contexto, planoTime) {
+function resolverRodadaTime(team, investimentos, contexto, planoTime) {
   let estado = Object.assign({}, team.estado);
   const efeitosAplicados = [];
 
-  for (const area of Object.keys(AREAS_INDICADORES)) {
-    const nomeAcao = decisoesTime[area] || "Manter estratégia atual";
-    const acao = encontrarAcao(area, nomeAcao);
-    if (acao) {
-      estado = aplicarEfeitos(estado, acao.efeitos);
-      efeitosAplicados.push({ tipo: "decisao", area, acao: acao.acao });
-    }
-  }
+  const resultadoInvest = aplicarInvestimentos(estado, investimentos);
+  estado = resultadoInvest.estado;
+  efeitosAplicados.push(...resultadoInvest.efeitosAplicados);
 
   if (contexto.eventoNome) {
     const evento = eventoPorNome(contexto.eventoNome);
@@ -2021,10 +2228,10 @@ function resolverRodadaTime(team, decisoesTime, contexto, planoTime) {
   }
 
   const contadorAlinhamentoAnterior = (team.rodadasRisco && team.rodadasRisco.desalinhamentoPlano) || 0;
-  const alinhamento = avaliarAlinhamentoPlano(decisoesTime, planoTime, contadorAlinhamentoAnterior);
+  const alinhamento = avaliarAlinhamentoPlano(investimentos, planoTime, contadorAlinhamentoAnterior);
   if (alinhamento.penalidadeAplicada) {
     estado = aplicarEfeitos(estado, alinhamento.efeitos);
-    efeitosAplicados.push({ tipo: "penalidade_desalinhamento", detalhes: alinhamento.decisoesConflitantes });
+    efeitosAplicados.push({ tipo: "penalidade_desalinhamento", detalhes: alinhamento.camposConflitantes });
   }
 
   const chegaNestaRodada = contexto.rodadaConcorrente === contexto.numeroRodada;
@@ -2035,8 +2242,10 @@ function resolverRodadaTime(team, decisoesTime, contexto, planoTime) {
   }
   if (concorrenteAtivo) {
     const pressao = Object.assign({}, GAME_DESIGN.marcoConcorrente.pressaoPassiva);
-    const mitigouComercial = decisoesTime.Comercial === GAME_DESIGN.marcoConcorrente.mitigacaoComercial;
-    const mitigouRH = decisoesTime.RH === GAME_DESIGN.marcoConcorrente.mitigacaoRH;
+    const campoComercial = campoPorId(GAME_DESIGN.marcoConcorrente.campoMitigacaoComercial);
+    const campoRH = campoPorId(GAME_DESIGN.marcoConcorrente.campoMitigacaoRH);
+    const mitigouComercial = (investimentos[campoComercial.id] || 0) >= campoComercial.valorReferencia;
+    const mitigouRH = (investimentos[campoRH.id] || 0) >= campoRH.valorReferencia;
     if (mitigouComercial) delete pressao.C1;
     if (mitigouRH) delete pressao.R1;
     if (Object.keys(pressao).length) {
@@ -2067,14 +2276,15 @@ function resolverRodadaTime(team, decisoesTime, contexto, planoTime) {
     indiceComposto: computeComposite(estado),
     fatorReputacao: fatorReputacao(estado.G1),
     status,
-    decisoes: decisoesTime,
+    investimentos,
+    totalGasto: resultadoInvest.totalGasto,
     evento: contexto.eventoNome || null,
     marcoConcorrente: chegaNestaRodada,
     efeitosAplicados,
     alinhamentoPlano: {
       perfilPlano: alinhamento.perfilPlano,
       desalinhado: alinhamento.desalinhado,
-      decisoesConflitantes: alinhamento.decisoesConflitantes,
+      camposConflitantes: alinhamento.camposConflitantes,
       penalidadeAplicada: alinhamento.penalidadeAplicada,
       avisoJaAtivo: contadorAlinhamentoAnterior > 0
     }
@@ -2107,30 +2317,36 @@ function estrategiaDominanteDoPlano(plano) {
   return melhor;
 }
 
-function avaliarAlinhamentoPlano(decisoesTime, planoTime, contadorAnterior) {
+// desalinhado = o time investiu bem mais nos campos do perfil OPOSTO ao que declarou no plano
+// (custo x diferenciação — "foco" não conflita diretamente com nenhum dos dois hoje)
+function avaliarAlinhamentoPlano(investimentos, planoTime, contadorAnterior) {
   const perfilPlano = estrategiaDominanteDoPlano(planoTime);
-  if (!perfilPlano) {
-    return { perfilPlano: null, desalinhado: false, decisoesConflitantes: [], novoContador: 0, efeitos: {}, penalidadeAplicada: false };
+  if (!perfilPlano || perfilPlano === "foco") {
+    return { perfilPlano: perfilPlano || null, desalinhado: false, camposConflitantes: [], novoContador: 0, efeitos: {}, penalidadeAplicada: false };
   }
-  const decisoesConflitantes = [];
-  for (const area of Object.keys(AREAS_INDICADORES)) {
-    const nomeAcao = decisoesTime[area] || "Manter estratégia atual";
-    const acao = encontrarAcao(area, nomeAcao);
-    if (acao && acao.perfilEstrategico && acao.perfilEstrategico !== perfilPlano) {
-      decisoesConflitantes.push({ area, acao: acao.acao, perfilDecisao: acao.perfilEstrategico });
+  const perfilOposto = perfilPlano === "custo" ? "diferenciacao" : "custo";
+  let somaDeclarado = 0;
+  let somaOposto = 0;
+  const camposConflitantes = [];
+  todosOsCampos().forEach((campo) => {
+    const valor = Math.max(0, investimentos[campo.id] || 0);
+    if (valor <= 0) return;
+    if (campo.perfilEstrategico === perfilPlano) somaDeclarado += valor;
+    if (campo.perfilEstrategico === perfilOposto) {
+      somaOposto += valor;
+      camposConflitantes.push({ area: campo.area, campo: campo.nome, valor, perfilCampo: perfilOposto });
     }
-  }
-  const desalinhado = decisoesConflitantes.length > 0;
+  });
+  const desalinhado = somaOposto > 0 && somaOposto > somaDeclarado * 1.3;
   let novoContador = desalinhado ? (contadorAnterior || 0) + 1 : 0;
   let efeitos = {};
   let penalidadeAplicada = false;
-  // 2ª rodada seguida sem corrigir (nem decisão, nem plano revisado) -> consequência real
   if (novoContador >= 2) {
     efeitos = { R4: -8 };
     penalidadeAplicada = true;
-    novoContador = 0; // reinicia — a consequência já foi aplicada
+    novoContador = 0;
   }
-  return { perfilPlano, desalinhado, decisoesConflitantes, novoContador, efeitos, penalidadeAplicada };
+  return { perfilPlano, desalinhado, camposConflitantes, novoContador, efeitos, penalidadeAplicada };
 }
 
 function zonasDoEstado(estado) {
@@ -2271,23 +2487,50 @@ function tabelaLeaderboard(times) {
   </table>`;
 }
 
-function seletorDecisoes(decisoesAtuais, disabled) {
+function fmtR$Curto(v) {
+  return "R$ " + Math.round(v).toLocaleString("pt-BR");
+}
+
+function seletorInvestimentos(investimentosAtuais, orcamentoTotal, disabled) {
   const areas = ["Comercial", "Processos", "RH", "Financeiro"];
-  return areas.map((area) => {
-    const opcoes = GAME_DESIGN.decisoesPorArea[area];
-    const atual = decisoesAtuais[area] || "Manter estratégia atual";
+  const totalAlocado = Object.values(investimentosAtuais).reduce((a, b) => a + (Number(b) || 0), 0);
+  const restante = orcamentoTotal - totalAlocado;
+  const estourou = restante < 0;
+
+  const cardsAreas = areas.map((area) => {
+    const campos = GAME_DESIGN.camposInvestimento[area];
     return `<div class="decisao-area-card">
       <div class="decisao-area-titulo">${area}</div>
-      <div class="decisao-opcoes">
-        ${opcoes.map((op) => `
-          <label class="decisao-opcao ${atual === op.acao ? "selecionada" : ""}">
-            <input type="radio" name="decisao-${area}" value="${esc(op.acao)}" ${atual === op.acao ? "checked" : ""} ${disabled ? "disabled" : ""} data-jogo-decisao="${area}" />
-            <span class="decisao-opcao-nome">${esc(op.acao)}${op.tema ? ` <span class="decisao-tag">${esc(op.tema)}</span>` : ""}</span>
-            <span class="decisao-opcao-obs">${esc(op.observacao)}</span>
-          </label>`).join("")}
+      <div class="investimento-campos">
+        ${campos.map((c) => {
+          const valor = Number(investimentosAtuais[c.id]) || 0;
+          const fator = fatorInvestimento(valor, c.valorReferencia);
+          return `<div class="investimento-item">
+            <div class="investimento-item-cabecalho">
+              <span class="investimento-item-nome">${esc(c.nome)}${c.tema ? ` <span class="decisao-tag">${esc(c.tema)}</span>` : ""}</span>
+              <span class="investimento-item-referencia">referência: ${fmtR$Curto(c.valorReferencia)}</span>
+            </div>
+            <p class="decisao-opcao-obs">${esc(c.descricao)}</p>
+            <div class="investimento-item-input">
+              <span class="investimento-prefixo">R$</span>
+              <input type="number" min="0" step="1000" class="investimento-valor-input" value="${valor || ""}" placeholder="0"
+                data-jogo-investimento="${c.id}" ${disabled ? "disabled" : ""} />
+              <span class="investimento-fator">${valor > 0 ? "efeito " + Math.round(fator * 100) + "%" : ""}</span>
+            </div>
+          </div>`;
+        }).join("")}
       </div>
     </div>`;
   }).join("");
+
+  return `
+    <div class="orcamento-barra ${estourou ? "orcamento-estourado" : ""}">
+      <span>Orçamento da rodada: <strong>${fmtR$Curto(orcamentoTotal)}</strong></span>
+      <span>Alocado: <strong>${fmtR$Curto(totalAlocado)}</strong></span>
+      <span>${estourou ? "Excedeu em " + fmtR$Curto(-restante) + " — reduza algum campo" : "Restante: " + fmtR$Curto(restante)}</span>
+    </div>
+    ${cardsAreas}
+  `;
 }
 
 const PERFIL_LABEL = { custo: "Liderança em custo", diferenciacao: "Diferenciação", foco: "Foco" };
@@ -2296,21 +2539,21 @@ function renderAvisoAlinhamento(al) {
   if (!al || !al.perfilPlano) return "";
   if (al.penalidadeAplicada) {
     return `<div class="relatorio-desalinho relatorio-desalinho-forte">
-      🔴 <strong>Desalinhamento persistente com o plano</strong> — 2ª rodada seguida em que as decisões contradizem a Estratégia Genérica declarada (${PERFIL_LABEL[al.perfilPlano]}). Alinhamento societário caiu como consequência.
-      <div class="relatorio-desalinho-detalhe">${al.decisoesConflitantes.map((d) => `<span class="tag tag-alerta">${d.area}: ${esc(d.acao)}</span>`).join(" ")}</div>
+      🔴 <strong>Desalinhamento persistente com o plano</strong> — 2ª rodada seguida investindo predominantemente no perfil oposto à Estratégia Genérica declarada (${PERFIL_LABEL[al.perfilPlano]}). Alinhamento societário caiu como consequência.
+      <div class="relatorio-desalinho-detalhe">${al.camposConflitantes.map((d) => `<span class="tag tag-alerta">${d.area}: ${esc(d.campo)} (${fmtR$Curto(d.valor)})</span>`).join(" ")}</div>
     </div>`;
   }
   if (al.desalinhado) {
     return `<div class="relatorio-desalinho">
-      ⚠️ Estas decisões contradizem a Estratégia Genérica do plano (<strong>${PERFIL_LABEL[al.perfilPlano]}</strong>). Alinhem as decisões na próxima rodada, ou revisem o plano se o rumo mudou de verdade — senão isso afeta o Alinhamento societário.
-      <div class="relatorio-desalinho-detalhe">${al.decisoesConflitantes.map((d) => `<span class="tag tag-alerta">${d.area}: ${esc(d.acao)}</span>`).join(" ")}</div>
+      ⚠️ Os investimentos desta rodada foram predominantemente no perfil oposto à Estratégia Genérica do plano (<strong>${PERFIL_LABEL[al.perfilPlano]}</strong>). Reequilibrem os investimentos na próxima rodada, ou revisem o plano se o rumo mudou de verdade — senão isso afeta o Alinhamento societário.
+      <div class="relatorio-desalinho-detalhe">${al.camposConflitantes.map((d) => `<span class="tag tag-alerta">${d.area}: ${esc(d.campo)} (${fmtR$Curto(d.valor)})</span>`).join(" ")}</div>
     </div>`;
   }
-  return `<div class="relatorio-alinhado">✅ Decisões coerentes com a Estratégia Genérica do plano (${PERFIL_LABEL[al.perfilPlano]}).</div>`;
+  return `<div class="relatorio-alinhado">✅ Investimentos coerentes com a Estratégia Genérica do plano (${PERFIL_LABEL[al.perfilPlano]}).</div>`;
 }
 
-function contarDecisoesDoTime(teamId) {
-  return jogoDecisoesDoTime.filter((d) => d.team_id === teamId).length;
+function totalInvestidoDoTime(teamId) {
+  return jogoInvestimentosDoTime.filter((d) => d.team_id === teamId).reduce((acc, d) => acc + (Number(d.valor) || 0), 0);
 }
 
 function prazoRestanteTexto(prazoISO) {
@@ -2448,9 +2691,9 @@ let jogoSessoes = [];
 let jogoSessaoAtual = null;
 let jogoTimes = [];
 let jogoRodadas = [];
-let jogoDecisoesDoTime = []; // decisões da rodada aberta, de todos os times (facilitador usa para ver quem já decidiu)
+let jogoInvestimentosDoTime = []; // investimentos da rodada aberta, de todos os times (facilitador usa para acompanhar)
 let jogoMeuTimeId = null;
-let jogoMinhasDecisoesRascunho = {};
+let jogoMeusInvestimentosRascunho = {};
 let jogoCanalRealtime = null;
 let jogoUltimoRelatorio = null; // guarda o resultado do fechamento da última rodada, para exibir o "relatório da rodada"
 let jogoRelatoriosPorRodada = {}; // relatórios de TODAS as rodadas fechadas já lidos do banco (numero -> itens), só para facilitador
@@ -2479,7 +2722,6 @@ async function criarSessaoJogo(nome, totalRodadas, rodadaConcorrente) {
 }
 
 function sessaoUsuarioId() {
-  // sbClient.auth guarda a sessão internamente; recuperamos o id síncrono via getSession já resolvido no login
   return window.__meuUserId || null;
 }
 
@@ -2494,10 +2736,10 @@ async function abrirSessaoJogo(sessionId) {
   jogoRodadas = rodadas || [];
   const rodadaAberta = jogoRodadas.find((r) => r.status === "aberta");
   if (rodadaAberta) {
-    const { data: decisoes } = await sbClient.from("game_decisions").select("*").eq("round_id", rodadaAberta.id);
-    jogoDecisoesDoTime = decisoes || [];
+    const { data: investimentos } = await sbClient.from("game_investimentos").select("*").eq("round_id", rodadaAberta.id);
+    jogoInvestimentosDoTime = investimentos || [];
   } else {
-    jogoDecisoesDoTime = [];
+    jogoInvestimentosDoTime = [];
   }
   // descobre se sou membro de algum time desta sessão
   jogoMeuTimeId = null;
@@ -2511,7 +2753,7 @@ async function abrirSessaoJogo(sessionId) {
     if (meuVinculo) jogoMeuTimeId = meuVinculo.team_id;
   }
   jogoView = souFacilitador() ? "facilitador" : "time";
-  jogoMinhasDecisoesRascunho = {};
+  jogoMeusInvestimentosRascunho = {};
   jogoRelatoriosPorRodada = {};
   if (souFacilitador()) {
     const rodadasFechadas = jogoRodadas.filter((r) => r.status === "fechada");
@@ -2536,7 +2778,7 @@ function assinarRealtimeJogo(sessionId) {
     .channel("jogo-" + sessionId)
     .on("postgres_changes", { event: "*", schema: "public", table: "game_teams", filter: "session_id=eq." + sessionId }, () => recarregarSessaoSilencioso())
     .on("postgres_changes", { event: "*", schema: "public", table: "game_rounds", filter: "session_id=eq." + sessionId }, () => recarregarSessaoSilencioso())
-    .on("postgres_changes", { event: "*", schema: "public", table: "game_decisions" }, () => recarregarSessaoSilencioso())
+    .on("postgres_changes", { event: "*", schema: "public", table: "game_investimentos" }, () => recarregarSessaoSilencioso())
     .subscribe();
 }
 
@@ -2553,8 +2795,8 @@ async function recarregarSessaoSilencioso() {
   jogoRodadas = rodadas || jogoRodadas;
   const rodadaAberta = jogoRodadas.find((r) => r.status === "aberta");
   if (rodadaAberta) {
-    const { data: decisoes } = await sbClient.from("game_decisions").select("*").eq("round_id", rodadaAberta.id);
-    jogoDecisoesDoTime = decisoes || [];
+    const { data: investimentos } = await sbClient.from("game_investimentos").select("*").eq("round_id", rodadaAberta.id);
+    jogoInvestimentosDoTime = investimentos || [];
   }
   if (modoAtual === "jogo") renderStageOnly();
 }
@@ -2588,15 +2830,22 @@ async function abrirNovaRodada(prazoISO) {
   return error;
 }
 
-async function salvarMinhaDecisao(area, acao) {
+async function salvarMeuInvestimento(campoId, valor) {
   const rodadaAberta = jogoRodadas.find((r) => r.status === "aberta");
   const timeId = timeAtivoParaDecisao();
   if (!rodadaAberta || !timeId) return;
-  await sbClient.from("game_decisions").upsert({
-    round_id: rodadaAberta.id, team_id: timeId, area, acao, decidido_por: window.__meuUserId
-  }, { onConflict: "round_id,team_id,area" });
-  jogoMinhasDecisoesRascunho[area] = acao;
+  const valorNumerico = Math.max(0, Number(valor) || 0);
+  await sbClient.from("game_investimentos").upsert({
+    round_id: rodadaAberta.id, team_id: timeId, campo_id: campoId, valor: valorNumerico, decidido_por: window.__meuUserId
+  }, { onConflict: "round_id,team_id,campo_id" });
+  jogoMeusInvestimentosRascunho[campoId] = valorNumerico;
   await recarregarSessaoSilencioso();
+}
+
+function investimentosDoTimeNaRodada(teamId) {
+  const mapa = {};
+  jogoInvestimentosDoTime.filter((d) => d.team_id === teamId).forEach((d) => { mapa[d.campo_id] = Number(d.valor) || 0; });
+  return mapa;
 }
 
 // ---------- Fechamento de rodada: roda o motor localmente e grava o resultado ----------
@@ -2608,12 +2857,7 @@ async function fecharRodadaAtual() {
 
   for (const team of jogoTimes) {
     if (team.status !== "ativo") { relatorio.push({ time: team.nome, pulou: true }); continue; }
-    const decisoesDoTime = jogoDecisoesDoTime.filter((d) => d.team_id === team.id);
-    const decisoesTime = {};
-    ["Comercial", "Processos", "RH", "Financeiro"].forEach((area) => {
-      const d = decisoesDoTime.find((x) => x.area === area);
-      decisoesTime[area] = d ? d.acao : "Manter estratégia atual";
-    });
+    const investimentosTime = investimentosDoTimeNaRodada(team.id);
 
     let eventoNome = null;
     if (Math.random() < 0.4) {
@@ -2629,12 +2873,12 @@ async function fecharRodadaAtual() {
       rodadaConcorrente: jogoSessaoAtual.rodada_concorrente,
       concorrenteJaChegou: team.concorrente_ja_chegou
     };
-    const resultado = resolverRodadaTime(team, decisoesTime, contexto, planoTime);
+    const resultado = resolverRodadaTime(team, investimentosTime, contexto, planoTime);
     const ultimoSnapshot = resultado.historico[resultado.historico.length - 1];
     const linhasContabeis = new Set();
     ultimoSnapshot.efeitosAplicados.forEach((ap) => {
       let efeitos = null;
-      if (ap.tipo === "decisao") efeitos = encontrarAcao(ap.area, ap.acao).efeitos;
+      if (ap.tipo === "investimento") efeitos = ap.efeitos;
       if (ap.tipo === "evento") efeitos = eventoPorNome(ap.nome).efeitos;
       if (ap.tipo === "marco") efeitos = GAME_DESIGN.marcoConcorrente.choqueImediato;
       if (ap.tipo === "pressao_concorrencia") efeitos = GAME_DESIGN.marcoConcorrente.pressaoPassiva;
@@ -2651,7 +2895,8 @@ async function fecharRodadaAtual() {
 
     relatorio.push({
       time: team.nome,
-      decisoes: decisoesTime,
+      investimentos: investimentosTime,
+      totalGasto: ultimoSnapshot.totalGasto,
       evento: eventoNome,
       indiceFinalAnterior: (team.historico && team.historico.length) ? team.historico[team.historico.length - 1].indiceFinal : computeIndiceFinal(team.estado),
       indiceFinalNovo: resultado.historico[resultado.historico.length - 1].indiceFinal,
@@ -2742,7 +2987,7 @@ function renderPainelFacilitador() {
           <div>
             <strong>${esc(t.nome)}</strong>
             <span class="pill pill-${t.status === "ativo" ? "ok" : "risco"}">${STATUS_LABEL[t.status]}</span>
-            ${rodadaAberta ? `<span class="muted"> · ${contarDecisoesDoTime(t.id)}/4 decisões nesta rodada</span>` : ""}
+            ${rodadaAberta ? `<span class="muted"> · ${fmtR$Curto(totalInvestidoDoTime(t.id))} de ${fmtR$Curto(GAME_DESIGN.orcamentoPorRodada)} alocados</span>` : ""}
             <button class="btn btn-ghost btn-xs" type="button" data-action="jogo-ver-como-jogador" data-team-id="${t.id}" style="margin-left:8px">👁️ Ver como jogador</button>
           </div>
           <div class="form-linha-inline">
@@ -2825,7 +3070,11 @@ function renderRelatorioRodada(relatorio) {
           <span class="muted"> · índice ${item.indiceFinalAnterior.toFixed(1)} → ${item.indiceFinalNovo.toFixed(1)} (${delta >= 0 ? "+" : ""}${delta.toFixed(1)})</span>
           ${item.marcoConcorrente ? `<div class="relatorio-marco">📍 O concorrente chegou ao mercado nesta rodada.</div>` : ""}
           ${item.evento ? `<div class="relatorio-evento">🎲 Evento: ${esc(item.evento)}</div>` : `<div class="muted">Sem evento nesta rodada.</div>`}
-          <div class="relatorio-decisoes">${Object.entries(item.decisoes).map(([area, acao]) => `<span class="tag">${area}: ${esc(acao)}</span>`).join(" ")}</div>
+          <div class="relatorio-decisoes">${(item.investimentos ? Object.entries(item.investimentos).filter(([, v]) => v > 0) : []).map(([campoId, valor]) => {
+            const campo = campoPorId(campoId);
+            return `<span class="tag">${campo ? campo.area + ": " + campo.nome : campoId} — ${fmtR$Curto(valor)}</span>`;
+          }).join(" ") || `<span class="muted">Nenhum investimento lançado nesta rodada.</span>`}
+          ${item.totalGasto ? `<div class="muted" style="margin-top:4px">Total investido: ${fmtR$Curto(item.totalGasto)} de ${fmtR$Curto(GAME_DESIGN.orcamentoPorRodada)}</div>` : ""}</div>
           ${item.linhasContabeis && item.linhasContabeis.length ? `<div class="relatorio-contabil">📊 Linhas contábeis afetadas: ${item.linhasContabeis.map((l) => `<span class="tag tag-contabil">${esc(l)}</span>`).join(" ")}</div>` : ""}
           ${renderAvisoAlinhamento(item.alinhamentoPlano)}
           ${item.statusNovo !== item.statusAnterior ? `<div class="relatorio-status-mudou">⚠️ Situação mudou: ${STATUS_LABEL[item.statusNovo]}</div>` : ""}
@@ -2840,7 +3089,7 @@ function renderPainelTime() {
   const sessao = jogoSessaoAtual;
   const timeId = timeAtivoParaDecisao();
   const emPreview = !!jogoVisualizandoComoTimeId && souFacilitador();
-  const bannerPreview = emPreview ? `<div class="readonly-banner">👁️ Você está vendo como o time <strong>${esc((jogoTimes.find((t) => t.id === jogoVisualizandoComoTimeId) || {}).nome || "")}</strong> vê esta tela. As decisões que você tomar aqui valem de verdade para esse time. <button class="link-btn" type="button" data-action="jogo-voltar-facilitador">← Voltar ao painel de facilitador</button></div>` : "";
+  const bannerPreview = emPreview ? `<div class="readonly-banner">👁️ Você está vendo como o time <strong>${esc((jogoTimes.find((t) => t.id === jogoVisualizandoComoTimeId) || {}).nome || "")}</strong> vê esta tela. Os investimentos que você lançar aqui valem de verdade para esse time. <button class="link-btn" type="button" data-action="jogo-voltar-facilitador">← Voltar ao painel de facilitador</button></div>` : "";
 
   if (!timeId) {
     return `
@@ -2859,9 +3108,8 @@ function renderPainelTime() {
 
   const meuTime = jogoTimes.find((t) => t.id === timeId);
   const rodadaAberta = jogoRodadas.find((r) => r.status === "aberta");
-  const minhasDecisoes = {};
-  jogoDecisoesDoTime.filter((d) => d.team_id === timeId).forEach((d) => { minhasDecisoes[d.area] = d.acao; });
-  if (!emPreview) Object.assign(minhasDecisoes, jogoMinhasDecisoesRascunho);
+  const meusInvestimentos = investimentosDoTimeNaRodada(timeId);
+  if (!emPreview) Object.assign(meusInvestimentos, jogoMeusInvestimentosRascunho);
 
   const emJogo = meuTime.status === "ativo";
 
@@ -2882,9 +3130,9 @@ function renderPainelTime() {
       <p class="card-note">Acompanhe o restante da partida pelo placar abaixo.</p>
     </div>` : rodadaAberta ? `
     <div class="card">
-      <div class="card-kicker">Rodada ${rodadaAberta.numero} — decisões da sua equipe</div>
-      <p class="card-note">${rodadaAberta.prazo ? `Prazo: ${new Date(rodadaAberta.prazo).toLocaleString("pt-BR")} (${cronometroSpan(rodadaAberta.prazo)})` : "Sem prazo definido — combine com o facilitador."} Escolham 1 ação por área. Podem mudar de ideia até o facilitador fechar a rodada — só a última escolha em cada área conta.</p>
-      ${seletorDecisoes(minhasDecisoes, false)}
+      <div class="card-kicker">Rodada ${rodadaAberta.numero} — investimentos da sua equipe</div>
+      <p class="card-note">${rodadaAberta.prazo ? `Prazo: ${new Date(rodadaAberta.prazo).toLocaleString("pt-BR")} (${cronometroSpan(rodadaAberta.prazo)})` : "Sem prazo definido — combine com o facilitador."} Distribuam o orçamento da rodada entre os campos abaixo. Podem ajustar quantas vezes quiserem até o facilitador fechar a rodada — só o valor final em cada campo conta.</p>
+      ${seletorInvestimentos(meusInvestimentos, GAME_DESIGN.orcamentoPorRodada, false)}
     </div>` : `
     <div class="card">
       <p class="card-note">Nenhuma rodada aberta agora. Aguardem o facilitador abrir a próxima.</p>
@@ -2915,13 +3163,13 @@ function renderPainelTime() {
     <div class="card">
       <div class="card-kicker">Histórico de rodadas</div>
       <table class="historico-table">
-        <thead><tr><th>Rodada</th><th>Índice final</th><th>Decisões</th><th>Linhas contábeis afetadas</th><th>Plano</th><th>Evento</th><th>Situação</th></tr></thead>
+        <thead><tr><th>Rodada</th><th>Índice final</th><th>Total investido</th><th>Linhas contábeis afetadas</th><th>Plano</th><th>Evento</th><th>Situação</th></tr></thead>
         <tbody>
           ${meuTime.historico.map((h) => {
             const linhas = new Set();
             (h.efeitosAplicados || []).forEach((ap) => {
               let efeitos = null;
-              if (ap.tipo === "decisao") { const a = encontrarAcao(ap.area, ap.acao); efeitos = a ? a.efeitos : null; }
+              if (ap.tipo === "investimento") efeitos = ap.efeitos;
               if (ap.tipo === "evento") { const ev = eventoPorNome(ap.nome); efeitos = ev ? ev.efeitos : null; }
               if (ap.tipo === "marco") efeitos = GAME_DESIGN.marcoConcorrente.choqueImediato;
               if (ap.tipo === "pressao_concorrencia") efeitos = GAME_DESIGN.marcoConcorrente.pressaoPassiva;
@@ -2929,9 +3177,10 @@ function renderPainelTime() {
             });
             const al = h.alinhamentoPlano;
             const alIcone = !al || !al.perfilPlano ? "—" : al.penalidadeAplicada ? "🔴" : al.desalinhado ? "⚠️" : "✅";
+            const camposInvestidos = (h.efeitosAplicados || []).filter((ap) => ap.tipo === "investimento");
             return `<tr>
             <td>${h.rodada}</td><td>${h.indiceFinal.toFixed(1)}</td>
-            <td>${Object.entries(h.decisoes || {}).map(([area, acao]) => `<span class="tag">${esc(acao)}</span>`).join(" ")}</td>
+            <td title="${camposInvestidos.map((c) => c.campoNome + ": " + fmtR$Curto(c.valor)).join(" · ")}">${fmtR$Curto(h.totalGasto || 0)}</td>
             <td>${Array.from(linhas).map((l) => `<span class="tag tag-contabil">${esc(l)}</span>`).join(" ") || "—"}</td>
             <td title="${al && al.perfilPlano ? PERFIL_LABEL[al.perfilPlano] : ""}">${alIcone}</td>
             <td>${h.evento ? esc(h.evento) : "—"}${h.marcoConcorrente ? " · 📍 concorrente chegou" : ""}</td>
